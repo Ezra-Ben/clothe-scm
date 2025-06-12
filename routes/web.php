@@ -20,3 +20,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+use app\Http\Livewire\VendorRegisterForm;
+Route::get('/vendor/register', VendorRegisterForm::class); 
