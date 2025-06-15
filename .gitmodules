@@ -1,0 +1,3 @@
+[submodule "java-server"]
+	path = java-server
+	url = https://github.com/Ezra-Ben/java-server.git
