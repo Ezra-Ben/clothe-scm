@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use illuminate\Support\Facades\Storage;
 use App\Services\VendorService;
 class VendorRegisterController extends Controller
 {
@@ -11,7 +10,7 @@ class VendorRegisterController extends Controller
     {
     $data = $request->validated();
 
-    $result = vendorService::handleRegistration($data);
+    $result = VendorService::handleRegistration($data);
 
     if ($result['status'] === 'approved'){
         return redirect ()->back()->with('success', 'Vendor registered and validated successfully!');
