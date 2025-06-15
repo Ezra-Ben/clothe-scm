@@ -4,8 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\VendorService;
+use App\Http\Requests\StoreVendorRequest;
 class VendorRegisterController extends Controller
 {
+
+    public function showForm(){
+        return view('vendor.register');
+    }
     public function submit(StoreVendorRequest $request)
     {
     $data = $request->validated();
