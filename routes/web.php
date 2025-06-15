@@ -21,5 +21,7 @@ Route::middleware(['auth'])->group(function () {
 
 require __DIR__.'/auth.php';
 
-use app\Http\Livewire\VendorRegisterForm;
-Route::get('/vendor/register', VendorRegisterForm::class); 
+use App\Http\Controllers\VendorRegisterController;
+
+Route::get('/vendor/register', [VendorRegisterController::class, 'showForm'])->name('vendor.form');
+Route::post('/vendor/register', [VendorRegisterController::class, 'submit'])->name('vendor.submit');
