@@ -15,12 +15,13 @@ class StoreVendorRequest extends FormRequest
     {
         return [
             'name'                  => 'required|string|max:255',
+            'product_bulk'          => 'required|string|max:255',
             'registration_number'   => 'required|string|max:100',
             'contact'               => 'required|string|max:255',
             'previous_clients'      => 'nullable|array', 
-            'previous_clients.*'    => 'nullable|string|max:255',
-            'transaction_history'   => 'nullable|string',
-            'industry_rating'       => 'nullable|string',
+            'previous_clients.*'    => 'nullable|array',
+            'transaction_history'   => 'nullable|array',
+            'industry_rating'       => 'nullable|array',
             'product_category'      => 'required|string', 
             'business_license_url'  => 'required|url',
         ];
