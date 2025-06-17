@@ -20,3 +20,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+use App\Http\Controllers\VendorRegisterController;
+
+Route::get('/vendor/register', [VendorRegisterController::class, 'showForm'])->name('vendor.form');
+Route::post('/vendor/register', [VendorRegisterController::class, 'submit'])->name('vendor.submit');
