@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Vendor;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\VendorService;
 use App\Http\Requests\StoreVendorRequest;
