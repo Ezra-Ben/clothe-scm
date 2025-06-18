@@ -16,8 +16,7 @@ return new class extends Migration
             $table->string('name',100);
             $table->string('business_name');
             $table->string('registration_number',50)->unique();
-            $table->string('email')->unique();
-            $table->string('address');
+            $table->string('contact')->unique();
             $table->string('product_category');
             $table->string('business_license_url');
             $table->timestamps();
