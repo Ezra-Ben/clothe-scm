@@ -20,7 +20,9 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
 
+
 Route::get('/vendor/register', [VendorRegisterController::class, 'showForm'])->name('vendor.form');
 Route::post('/vendor/register', [VendorRegisterController::class, 'submitForm'])->name('vendor.submit');
+
 
 require __DIR__.'/auth.php';
