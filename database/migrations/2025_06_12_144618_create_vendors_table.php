@@ -7,28 +7,20 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
-     */
+    *Run the migrations
+    */
     public function up(): void
     {
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('name',100);
+            $table->string('business_name');
             $table->string('registration_number',50)->unique();
-            $table->string('email',100)->unique();
-            $table->string('phone',20);
-            $table->text('address');
-            $table->json('previous_clients')->nullable();
-            $table->json('transaction_history')->nullable();
-            $table->float('industry_ratings')->nullable();
-            $table->json('product_categories');
-            $table->json('material_types');
-            $table->string('pricing_range',50)->nullable();
-            $table->boolean('bulk_availability')->default(false);
-            $table->json('certifications');
-            $table->string('business_license');
-            $table->string('tax_identification');
+            $table->string('email')->unique();
+            $table->string('address');
+            $table->string('product_category');
+            $table->string('business_license_url');
+            $table->timestamps();
             
         });
     }
