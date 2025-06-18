@@ -8,30 +8,32 @@ use App\Models\Vendor;
 
 class VendorService
 {
-    public function handleRegistration(array $validated)
+    public function validateAndRegister(array $validated)
     {
         $payload = [
             'name' => $validated['name'],
-	    'business_name' => $validated['business_name'],
-            'registration_number' => $validated['registration_number'],
-            'contact' => $validated['contact'],
+	        'businessName' => $validated['business_name'],
+            'regNo' => $validated['registration_number'],
+            'productBulk' => $validated['product_bulk'],
 
-             'previous_clients' => $validated['previous_clients'],
-            'transaction_history' => $validated['transaction_history'],
-            'industry_rating' => $validated['industry_rating'] ?? [],
+            'previousClients' => $validated['previous_clients'],
+            'transactionHistory' => $validated['transaction_history'],
+            'industryRatings' => $validated['industry_rating'] ?? [],
 
-            'product_category' => $validated['product_category'],
-            'business_license_url' => $validated['business_license_url'],
+            'businessLicenseUrl' => $validated['business_license_url'],
         ];
 
+        \Log::info('Outgoing request to Java Server:', ['payload' => $payload]);
+        
+        $response = Http::post('http://localhost:8080/validate-vendor', $payload);
 
-        $response = Http::post('http://localhost:8080/api/vendor/validate', $payload);
-
-        if ($response->successful() && $response->json('valid')) {
+        $responseData = $response->json();
+        
+        if ($response->successful() && ($responseData['valid'] ?? false)) {
             
         Vendor::create([
                 'name' => $validated['name'],
-	 	'business_name' => $validated['business_name'],
+	 	        'business_name' => $validated['business_name'],
                 'registration_number' => $validated['registration_number'],
                 'contact' => $validated['contact'],
                 'product_category' => $validated['product_category'],
@@ -40,6 +42,12 @@ class VendorService
             return ['success' => true, 'message' => 'Vendor registered successfully.'];
         }
 
-        return ['success' => false, 'message' => $response->json('message') ?? 'Validation failed.'];
+       return [
+               'success' => false,
+               'errors' => [
+               'server_validation' => $responseData['validationErrors'] ?? ['Validation failed from external server']
+               ]
+          ];  
+
     }
 }
