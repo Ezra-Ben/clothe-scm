@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Vendor\VendorController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -19,9 +20,7 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
 
-require __DIR__.'/auth.php';
-
-use App\Http\Controllers\Vendor\VendorRegisterController;
-
 Route::get('/vendor/register', [VendorRegisterController::class, 'showForm'])->name('vendor.form');
-Route::post('/vendor/register', [VendorRegisterController::class, 'submit'])->name('vendor.submit');
+Route::post('/vendor/register', [VendorRegisterController::class, 'submitForm'])->name('vendor.submit');
+
+require __DIR__.'/auth.php';
