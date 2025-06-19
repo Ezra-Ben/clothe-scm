@@ -1,23 +1,20 @@
 <?php
 
+use App\Http\Controllers\Vendor\VendorController;
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::view('/', 'welcome');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', 'settings/profile');
+Route::view('profile', 'profile')
+    ->middleware(['auth'])
+    ->name('profile');
 
-    Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
-    Volt::route('settings/password', 'settings.password')->name('settings.password');
-    Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
-});
+Route::get('vendor/register', [VendorController::class, 'showForm'])->name('vendor.form');
+Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('vendor.register');
 
 require __DIR__.'/auth.php';
 
