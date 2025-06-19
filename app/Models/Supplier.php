@@ -17,8 +17,13 @@ class Supplier extends Model
         return $this->hasMany(Contract::class);
     }
 
+
     public function performanceRecords()
     {
         return $this->hasMany(Performance::class);
     }
+     public function isAdmin()
+    {
+    return $this->role === 'admin';
+    } 
 }
