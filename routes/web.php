@@ -26,7 +26,15 @@ Route::prefix('settings')->name('settings.')->middleware(['auth'])->group(functi
         return view('livewire.settings.appearance');
     })->name('appearance');
 });
-
+Route::prefix('supplier/{supplier}')->group(function () {
+    Route::get('/performance', [PerformanceController::class, 'index'])
+         ->name('supplier.performance');
+    
+    Route::post('/performance', [PerformanceController::class, 'store']);
+});
+Route::get('/supplier/performance', function () {
+    return view('supplier.performance.index');
+});
 
 Route::get('vendor/register', [VendorController::class, 'showForm'])->name('vendor.form');
 Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('vendor.register');
