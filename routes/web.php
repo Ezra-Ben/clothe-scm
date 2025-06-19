@@ -43,11 +43,6 @@ Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('v
 
 require __DIR__.'/auth.php';
 
-use App\Http\Controllers\VendorRegisterController;
-
-Route::get('/vendor/register', [VendorRegisterController::class, 'showForm'])->name('vendor.form');
-Route::post('/vendor/register', [VendorRegisterController::class, 'submit'])->name('vendor.submit');
-
 use App\Http\Controllers\Admin\AdminSupplierDashboardController;
 
 Route::middleware(['auth'])->group(function () {
