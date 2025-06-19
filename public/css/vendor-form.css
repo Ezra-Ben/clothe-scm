@@ -1,0 +1,72 @@
+/* Centering the form on the page */
+.container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -250px;          
+    margin-bottom: 40px; 
+    min-height: auto;
+}
+
+h2 {
+    font-weight: bold;
+    color: white;
+    font-size: 28px;
+    padding-bottom: 20px;
+    }
+
+/* Styling the form box */
+.form-box {
+    width: 450px;
+    padding: 20px;
+    background: #222;
+    border-radius: 12px; 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth input field styling */
+input,
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 10px; 
+    outline: none;
+    background: #333;
+    transition: 0.2s ease-in-out;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    background: white; 
+    color: black; 
+    border: 1px solid #555;
+    border-radius: 10px;
+    outline: none;
+    appearance: none; 
+}
+
+input:focus, select:focus {
+    border-color: #007bff;
+    box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Styling the submit button */
+button {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 10px; /* Matches input fields */
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #0056b3;
+}
