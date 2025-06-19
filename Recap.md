@@ -1,16 +1,16 @@
 Laravel Vendor Validation Flow (No DB Persistence for Array Fields)
 
 Required Fields in Registration Form
-                                        Persistence
-Field	          	Type		Required	Notes
-name			text		Yes		Business or individual name
-registration_number	text		Yes		Unique identifier
-contact			text		Yes		Phone number or email
-previous_clients	textarea	No		Comma-separated; for validation only
-transaction_history	textarea	No		Comma-separated; for validation only
-industry_rating		textarea	No		Comma-separated; for validation only
-product_category	select (single)	Yes		Must choose one category
-business_license_url	text		Yes		URL to an online business_license
+                                    Persistence
+Field	          	Type	    	Required	    Notes
+name		    	text		    Yes		        Business or individual name
+registration_number	text		    Yes		        Unique identifier
+contact		    	text		    Yes		        Phone number or email
+previous_clients	textarea	    No		        for validation only
+transaction_history	textarea	    No		        for validation only
+industry_rating		textarea	    No		        for validation only
+product_category	select (single)	Yes		        Must choose one category
+business_license_url	text		Yes		        URL to an online business_license
 
 UI Layer – Form
 Folder: resources/views/vendor/
