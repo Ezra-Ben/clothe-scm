@@ -25,3 +25,11 @@ use App\Http\Controllers\Vendor\VendorRegisterController;
 
 Route::get('/vendor/register', [VendorRegisterController::class, 'showForm'])->name('vendor.form');
 Route::post('/vendor/register', [VendorRegisterController::class, 'submit'])->name('vendor.submit');
+
+use App\Http\Controllers\Supplier\SupplierController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/supplier/{id}/profile', [SupplierController::class, 'profile'])->name('supplier.profile');
+    Route::get('/supplier/{id}/dashboard', [SupplierController::class, 'dashboard'])->name('supplier.dashboard');
+});
+Route::put('/supplier/{id}/update', [SupplierController::class, 'update'])->name('supplier.update');
