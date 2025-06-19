@@ -13,6 +13,7 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
+
 Route::prefix('settings')->name('settings.')->middleware(['auth'])->group(function () {
     Route::get('/profile', function () {
         return view('livewire.settings.profile');
@@ -35,6 +36,7 @@ Route::prefix('supplier/{supplier}')->group(function () {
 Route::get('/supplier/performance', function () {
     return view('supplier.performance.index');
 });
+
 
 Route::get('vendor/register', [VendorController::class, 'showForm'])->name('vendor.form');
 Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('vendor.register');
