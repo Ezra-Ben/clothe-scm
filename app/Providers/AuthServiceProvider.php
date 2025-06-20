@@ -1,8 +1,9 @@
 <?php
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 
-class AuthServiceProvider
+class AuthServiceProvider extends ServiceProvider
 {
     public function boot()
     {
@@ -12,21 +13,19 @@ class AuthServiceProvider
             return $user->isAdmin();
         });
 
-    Gate::define('view-admin-supplier-dashboard', function ($user) {
+    	Gate::define('view-admin-supplier-dashboard', function ($user) {
         return $user->role === 'admin';
-    });
-     Gate::define('manage_performance', function ($user) {
+    	});
+    	Gate::define('manage_performance', function ($user) {
         return $user-> isAdmin();
-    });
-    Gate::define('manage-suppliers', function ($user) {
-        return $user-> isAdmin();
-    });
-     
-    Gate::define('upload-contract', function ($user) {
+    	});     
+    	Gate::define('upload-contract', function ($user) {
         return $user->role === 'admin';
-    });
+   	});
 
-    Gate::define('view-contract', function ($user) {
+    	Gate::define('view-contract', function ($user) {
         return in_array($user->role, ['admin', 'supplier']);
-    }
-                 }
+    	});
+     }
+}
+                
