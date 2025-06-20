@@ -1,9 +1,16 @@
 <?php
 use Illuminate\Support\Facades\Gate;
 
-public function boot()
+
+class AuthServiceProvider
 {
-    $this->registerPolicies();
+    public function boot()
+    {
+        $this->registerPolicies();
+
+        Gate::define('manage-suppliers', function ($user) {
+            return $user->isAdmin();
+        });
 
     Gate::define('view-admin-supplier-dashboard', function ($user) {
         return $user->role === 'admin';
@@ -21,5 +28,5 @@ public function boot()
 
     Gate::define('view-contract', function ($user) {
         return in_array($user->role, ['admin', 'supplier']);
-    });
-}
+    }
+                 }

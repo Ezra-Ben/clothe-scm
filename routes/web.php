@@ -6,6 +6,8 @@ use App\Http\Controllers\Supplier\PerformanceController;
 use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Vendor\VendorController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AdminSupplierDashboardController;
+use App\Http\Controllers\Supplier\SupplierController;
 
 Route::view('/', 'welcome');
 
@@ -44,6 +46,13 @@ Route::get('/supplier/performance', function () {
 
 Route::get('vendor/register', [VendorController::class, 'showForm'])->name('vendor.form');
 Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('vendor.register');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/supplier/{id}/profile', [SupplierController::class, 'profile'])->name('supplier.profile');
+    Route::get('/supplier/{id}/dashboard', [SupplierController::class, 'dashboard'])->name('supplier.dashboard');
+});
+Route::put('/supplier/{id}/update', [SupplierController::class, 'update'])->name('supplier.update');
 
 
 Route::middleware(['auth'])->group(function () {
