@@ -1,6 +1,6 @@
-<!-- resources/views/supplier/contracts/show.blade.php -->
 
-@extends('layouts.app') <!-- if your app uses a layout -->
+
+@extends('layouts.app') 
 
 @section('content')
 <div class="container">

@@ -1,10 +1,11 @@
 <?php
-// app/Http/Controllers/PerformanceController.php
-namespace App\Http\Controllers;
+
+namespace App\Http\Controllers\Supplier;
 
 use App\Models\Supplier;
 use App\Services\PerformanceService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class PerformanceController extends Controller
 {
