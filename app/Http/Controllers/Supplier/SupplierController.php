@@ -5,6 +5,7 @@ use App\Models\Supplier;
 use App\Models\Vendor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class SupplierController extends Controller
 {

@@ -6,7 +6,6 @@ use App\Http\Controllers\Supplier\PerformanceController;
 use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Vendor\VendorController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AdminSupplierDashboardController;
 use App\Http\Controllers\Supplier\SupplierController;
 
 Route::view('/', 'welcome');

@@ -16,6 +16,7 @@
                      <a href="{{ route('vendor.form') }}" class="btn-primary">
                             Apply as Vendor
                      </a>
+                   {{--  <a href="{{ route('supplier.dashboard') }} class="btn-  primary">Supplier Dashboard</a> --}}
                 </div>
         </div>
     </div>
