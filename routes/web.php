@@ -1,5 +1,9 @@
 <?php
 
+
+use App\Http\Controllers\Admin\AdminSupplierDashboardController;
+use App\Http\Controllers\Supplier\PerformanceController;
+use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Vendor\VendorController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,11 +45,11 @@ Route::get('/supplier/performance', function () {
 Route::get('vendor/register', [VendorController::class, 'showForm'])->name('vendor.form');
 Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('vendor.register');
 
-require __DIR__.'/auth.php';
-
-use App\Http\Controllers\Admin\AdminSupplierDashboardController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/suppliers/dashboard', [AdminSupplierDashboardController::class, 'index'])
         ->name('admin.supplier.dashboard');
 });
+
+
+require __DIR__.'/auth.php';

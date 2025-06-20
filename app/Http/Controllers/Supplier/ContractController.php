@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Supplier;
 
 use App\Models\Contract;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
 
 class ContractController extends Controller
 {
