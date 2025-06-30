@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('vendor_id')->constrained('vendors')->onDelete('cascade');
             $table->text('address');
             $table->foreignId('added_by')->nullable()->constrained('users')->onDelete('set null');
+             $table->boolean('is_active')->default(true);
+             $table->timestamp('last_supplied_at')->nullable();
             $table->timestamps();
         });
     }

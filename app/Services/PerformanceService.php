@@ -1,6 +1,6 @@
- <?php 
+<?php 
 
- namespace App\Services;
+namespace App\Services;
 
  use App\Models\Supplier;
  use App\Models\Performance ;

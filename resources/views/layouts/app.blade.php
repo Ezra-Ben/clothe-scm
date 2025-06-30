@@ -9,9 +9,17 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+        <style>
+    body { background: #f8faff; }
+    .navbar { background: #0d6efd; }
+    .navbar-brand, .nav-link, .navbar-nav .nav-link.active { color: #fff !important; }
+    .table-primary { background-color: #e3f0ff; }
+    .text-primary { color: #0d6efd !important; }
+</style>
         
 
         <!-- Scripts -->
@@ -19,7 +27,6 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <livewire:layout.navigation />
 
             <!-- Page Heading -->
             @if (isset($header))

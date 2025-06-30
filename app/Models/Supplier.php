@@ -5,25 +5,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class Supplier extends Model
 {
-    protected $fillable = ['vendor_id', 'address', 'added_by'];
+    protected $fillable = ['vendor_id', 'address', 'added_by', 'is_active', 'last_supplied_at'];
 
     public function vendor()
     {
         return $this->belongsTo(Vendor::class);
     }
-
+    public function scopeActive($query)
+    {
+    return $query->where('is_active', true);
+    }
     public function contracts()
     {
         return $this->hasMany(Contract::class);
+    } public function procurementRequests()
+    {
+        return $this->hasMany(ProcurementRequest::class);
     }
-
-
     public function performanceRecords()
     {
         return $this->hasMany(Performance::class);
     }
-     public function isAdmin()
-    {
-    return $this->role === 'admin';
-    } 
+    public function user(){
+        return $this->belongsTo(User::class,);
+    }
+   
 }
