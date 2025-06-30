@@ -2,50 +2,95 @@
 
 namespace App\Http\Controllers\Supplier;
 
+use App\Models\Supplier;
 use App\Models\Contract;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreContractRequest;
+use App\Services\ContractService;
 use App\Http\Controllers\Controller;
-
 
 class ContractController extends Controller
 {
+    protected $contractService;
+
+    public function __construct(ContractService $contractService)
+    {
+        $this->contractService = $contractService;
+
+    }
+    
     public function index()
     {
-        $contracts = Contract::with('supplier')->get();
-        return view('supplier.contracts.index', compact('contracts'));
+	$id = request()->query('id');
+
+        $supplier = $id
+            ? Supplier::with(['contracts.addedBy'])->findOrFail($id)
+            : auth()->user()->vendor->supplier()->with(['contracts.addedBy'])->first();
+
+
+        $contracts = $supplier->contracts;
+
+        return view('supplier.contracts.index', compact('supplier', 'contracts'));
     }
 
-    public function show($id)
+    public function show($contractId, $id = null)
     {
-        $contract = Contract::findOrFail($id);
-        return view('supplier.contracts.show', compact('contract'));
+        $supplier = $id
+            ? Supplier::with(['contracts.addedBy'])->findOrFail($id)
+            : auth()->user()->vendor->supplier()->with(['contracts.addedBy'])->first();
+
+
+        $contract = $supplier->contracts()->findOrFail($contractId);
+
+        return view('supplier.contracts.show', compact('contract', 'supplier'));
     }
 
-    public function create()
+    public function create($id)
     {
-        return view('supplier.contracts.create'); // You can create this view if needed
+        $supplier = Supplier::findOrFail($id);
+
+        return view('supplier.contracts.create', compact('supplier'));
     }
 
-    public function store(Request $request)
+    public function store(StoreContractRequest $request, $id)
     {
-        $validated = $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'file' => 'required|file|mimes:pdf,doc,docx',
-            'status' => 'required|in:active,expired',
-        ]);
+        try {
+            $this->contractService->createContract(
+                $id,
+                $request->validated(), 
+                auth()->id()
+            );
 
-        // Upload file
-        $filePath = $request->file('file')->store('contracts', 'public');
+            return redirect()
+                ->route('manage.supplier.contracts.index', ['id' => $id])
+                ->with('success', 'Contract created successfully.');
 
-        // Save to DB
-        Contract::create([
-            'supplier_id' => $validated['supplier_id'],
-            'file_url' => $filePath,
-            'uploaded_by' => auth()->id(), // assumes logged-in admin
-            'status' => $validated['status'],
-            'uploaded_at' => now(),
-        ]);
-
-        return redirect()->back()->with('success', 'Contract uploaded successfully.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withErrors('Failed to upload contract: ' . $e->getMessage());
+        }
     }
+    
+    public function update(StoreContractRequest $request, $id = null, $contractId)
+    {
+    $supplier = $id
+        ? Supplier::findOrFail($id)
+        : auth()->user()->vendor->supplier;
+
+    $contract = $supplier->contracts()->findOrFail($contractId);
+
+    try {
+        $this->contractService->updateContract($contract, $request->validated());
+
+        return redirect()
+            ->route('manage.supplier.contracts.show', $supplier->id)
+            ->with('success', 'Contract updated successfully.');
+
+    } catch (\Exception $e) {
+        return redirect()
+            ->back()
+            ->withErrors('Failed to update contract: ' . $e->getMessage());
+    }
+}
+
 }

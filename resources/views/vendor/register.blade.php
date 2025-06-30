@@ -1,9 +1,10 @@
-@extends('components.layouts.app')
+@extends('layouts.app')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/vendor-form.css') }}">
-<script src="{{ asset('js/vendor-form.js') }}" defer></script>
 
+@push('scripts')
+    <script src="{{ asset('js/vendor-form.js') }}"></script>
+@endpush
 
 <div class="container">
 <h2>Register as Vendor</h2>

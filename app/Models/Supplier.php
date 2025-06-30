@@ -5,7 +5,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Supplier extends Model
 {
-    protected $fillable = ['vendor_id', 'address', 'added_by'];
+    protected $fillable = [
+       'vendor_id', 
+       'address', 
+       'added_by',
+    ];
 
     public function vendor()
     {
@@ -18,12 +22,13 @@ class Supplier extends Model
     }
 
 
-    public function performanceRecords()
+    public function performances()
     {
         return $this->hasMany(Performance::class);
     }
-     public function isAdmin()
+
+    public function addedBy()
     {
-    return $this->role === 'admin';
-    } 
+        return $this->belongsTo(User::class, 'added_by');
+    }
 }
