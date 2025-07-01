@@ -6,15 +6,15 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>{{ $supplier->vendor->name }} Performance</h2>
         <span class="badge bg-primary">
-            Average Rating: {{ $averageRating ?? 'N/A' }}/5
+           Average Rating: {{ $supplier->performances->count() ? number_format($supplier->performances->avg('rating'), 1) : 'N/A' }}/5
         </span>
     </div>
 
     <!-- Review Form (Admin Only) -->
-    @can('manage_performance')
+    @can('manage-suppliers')
     <div class="card mb-4">
         <div class="card-body">
-            <form method="POST" action="{{ route('supplier.performance.store', $supplier) }}">
+            <form method="POST" action="{{ route('manage.supplier.performance.store', $supplier->id) }}">
                 @csrf
                 <div class="mb-3">
                     <label class="form-label">Rating (1-5)</label>
@@ -42,7 +42,7 @@
                     <strong>Rating: {{ $review->rating }}/5</strong>
                     <small class="text-muted">
                         {{ $review->created_at->format('M d, Y') }} by
-                        {{ $review->creator->name }}
+                        {{ $review->createdBy->name }}
                     </small>
                 </div>
                 <p class="mt-2">{{ $review->performance_note }}</p>

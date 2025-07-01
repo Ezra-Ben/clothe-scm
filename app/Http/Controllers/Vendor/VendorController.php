@@ -15,14 +15,22 @@ class VendorController extends Controller
 
     public function submitForm(VendorFormRequest $request)
     {    
-       
-        $validated = $request->validated();
-        
-
+        $validated = $request->validated();  
+ 
         $result = app(VendorService::class)->validateAndRegister($validated);
-        
-        return $result['success']
-  	    ? view('vendor.success')->with('message', $result['message'])
-            : redirect()->back()->withErrors($result['errors'])->withInput();
+ 
+        if ($result['success']) {
+
+            $supplier = $result['supplier'];
+
+            return redirect()
+                ->route('supplier.profile')
+                ->with('vendor_validated', $result['message']);
+        }
+
+        return redirect()
+            ->back()
+            ->withErrors($result['errors'])
+            ->withInput();
     }
 }

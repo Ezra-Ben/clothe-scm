@@ -22,12 +22,20 @@ class Supplier extends Model
     {
         return $this->hasMany(ProcurementRequest::class);
     }
-    public function performanceRecords()
-    {
-        return $this->hasMany(Performance::class);
-    }
+    
     public function user(){
         return $this->belongsTo(User::class,);
     }
    
+
+
+    public function performances()
+    {
+        return $this->hasMany(Performance::class);
+    }
+
+    public function addedBy()
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
 }

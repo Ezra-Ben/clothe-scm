@@ -4,7 +4,10 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Supplier;
 use App\Models\Vendor;
+use App\Models\User;
+use App\Models\Role;
 
 class VendorService
 {
@@ -31,8 +34,11 @@ class VendorService
         $responseData = $response->json();
 
         if ($response->successful() && ($responseData['valid'] ?? false)) {
-            
-        Vendor::create([
+         
+	$user = auth()->user();
+   
+        $vendor = Vendor::create([
+		'user_id' => $user->id,
                 'name' => $validated['name'],
 	 	'business_name' => $validated['business_name'],
                 'registration_number' => $validated['registration_number'],
@@ -40,8 +46,22 @@ class VendorService
                 'product_category' => $validated['product_category'],
                 'business_license_url' => $validated['business_license_url'],  
             ]);
-            return ['success' => true, 'message' => 'Vendor registered successfully.'];
-        }
+         
+	$supplier = Supplier::create([
+                'vendor_id' => $vendor->id,
+		'added_by' => auth()->id(),
+                // address will be NULL for now
+            ]);
+	
+        $user->role()->associate(Role::where('name', 'supplier')->first());
+        $user->save();
+
+        return [
+            'success' => true,
+            'supplier' => $supplier,  
+            'message' => 'Vendor registered successfully. Now complete the supplier profile.',
+        ];  
+      }
         
 
            return [

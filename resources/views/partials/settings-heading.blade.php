@@ -1,5 +1,5 @@
-<div class="relative mb-6 w-full">
-    <flux:heading size="xl" level="1">{{ __('Settings') }}</flux:heading>
-    <flux:subheading size="lg" class="mb-6">{{ __('Manage your profile and account settings') }}</flux:subheading>
-    <flux:separator variant="subtle" />
+<div class="position-relative mb-4 w-100">
+    <h1 class="display-5 fw-bold">{{ __('Settings') }}</h1>
+    <p class="lead text-muted mb-4">{{ __('Manage your profile and account settings') }}</p>
+    <hr class="border-top border-2 border-light" />
 </div>

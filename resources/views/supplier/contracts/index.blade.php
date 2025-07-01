@@ -1,42 +1,58 @@
-<!-- resources/views/supplier/contracts/index.blade.php -->
 
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2>Supplier Contracts</h2>
+<div class="container mt-4">
+    <h2 class="mb-4">Supplier Contracts</h2>
 
     @if(session('success'))
-        <div style="color: green;">
-            {{ session('success') }}
-        </div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <table border="1" cellpadding="10">
-        <thead>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
             <tr>
                 <th>ID</th>
-                <th>Supplier ID</th>
-                <th>File</th>
+                <th>Contract Number</th>
                 <th>Status</th>
-                <th>Uploaded At</th>
+                <th>Start Date</th>
+                <th>End Date</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($contracts as $contract)
+            @forelse ($contracts as $contract)
                 <tr>
                     <td>{{ $contract->id }}</td>
-                    <td>{{ $contract->supplier_id }}</td>
-                    <td><a href="{{ asset('storage/' . $contract->file_url) }}" target="_blank">View File</a></td>
-                    <td>{{ $contract->status }}</td>
-                    <td>{{ $contract->uploaded_at }}</td>
+                    <td>{{ $contract->contract_number }}</td>
                     <td>
-                        <a href="{{ route('contracts.show', $contract->id) }}">View</a>
+                        <span class="badge 
+                            @if($contract->status == 'active') bg-success 
+                            @elseif($contract->status == 'expired') bg-danger 
+                            @else bg-warning text-dark 
+                            @endif">
+                            {{ ucfirst($contract->status) }}
+                        </span>
+                    </td>
+                    <td>{{ $contract->start_date }}</td>
+                    <td>{{ $contract->end_date }}</td>
+                    <td>
+                        @can('manage-suppliers')
+                            <a href="{{ route('manage.supplier.contracts.show', ['contractId' => $contract->id, 'id' => $supplier->id]) }}" class="btn btn-primary btn-sm">Open</a>
+                        @else
+                            <a href="{{ route('supplier.contracts.show', $contract->id) }}" class="btn btn-outline-secondary btn-sm">Open</a>
+                        @endcan
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="6" class="text-center">No contracts found.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
+     @can('manage-suppliers')
+        <a href="{{ route('manage.supplier.contracts.create', ['id' => $supplier->id]) }}" class="btn btn-primary btn-sm">Create New Contract</a>
+     @endcan
 </div>
 @endsection

@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
- use App\Models\Supplier;
- use App\Models\Performance ;
+use App\Models\Supplier;
 
- class PerformanceService
+use App\Models\Performance ;
+
+class PerformanceService
  {
     public function recordReview(array $data, Supplier $supplier, int $creatorId):Performance
     {
@@ -15,16 +16,12 @@ namespace App\Services;
             'created_by' => $creatorId
         ]);
     }
-    
-    public function calculateAverageRating(Supplier $supplier): float
-        {
-            return round($supplier->performances()->avg('rating'), 1);
-    }
+ 
     
     public function getPerformanceHistory(Supplier $supplier)
     {
         return $supplier->performances()
-        ->with('creator')
+        ->with('createdBy')
         ->latest()
         ->paginate(10);
     }

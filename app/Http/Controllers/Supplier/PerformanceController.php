@@ -13,30 +13,36 @@ class PerformanceController extends Controller
 
     public function __construct(PerformanceService $service)
     {
-        $this->middleware('can:manage_performance')->except('index');
         $this->service = $service;
     }
 
-    public function index(Supplier $supplier)
+   
+
+    public function index($id = null)
     {
+        $supplier = $id
+            ? Supplier::with(['vendor', 'performances.createdBy'])->findOrFail($id)
+            : auth()->user()->vendor->supplier()->with(['performances.createdBy'])->first();
+
         return view('supplier.performance.index', [
             'supplier' => $supplier,
             'performances' => $this->service->getPerformanceHistory($supplier),
-            'averageRating' => $this->service->calculateAverageRating($supplier)
         ]);
     }
-    
 
-    public function store(Request $request, Supplier $supplier)
+
+
+    public function store(Request $request, $id)
     {
+        $supplier = Supplier::findOrFail($id);
+
         $validated = $request->validate([
             'rating' => 'required|integer|between:1,5',
-            'performance_note' => 'required|string|max:500'
+            'performance_note' => 'required|string|max:500',
         ]);
 
         $this->service->recordReview($validated, $supplier, auth()->id());
 
         return back()->with('success', 'Performance review recorded!');
     }
-    
 }

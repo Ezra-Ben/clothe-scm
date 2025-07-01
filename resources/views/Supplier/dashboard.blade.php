@@ -1,4 +1,3 @@
-{{-- filepath: resources/views/supplier/dashboard.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
@@ -14,28 +13,26 @@
                     <p><strong>Name:</strong> {{ $supplier->vendor->name }}</p>
                     <p><strong>Contact:</strong> {{ $supplier->vendor->contact }}</p>
                     <p><strong>Registration Number:</strong> {{ $supplier->vendor->registration_number }}</p>
-                    <p><strong>Product Bulk:</strong> {{ $supplier->vendor->product_bulk }}</p>
                     <p><strong>Product Category:</strong> {{ $supplier->vendor->product_category }}</p>
                     <p><strong>Business License:</strong> 
                         <a href="{{ $supplier->vendor->business_license_url }}" target="_blank">View License</a>
                     </p>
                 </div>
             </div>
+            <div class="mb-3">
+                    <a href="{{ route('supplier.profile', ['updated' => true]) }}" class="btn btn-primary">
+                       Go to Profile
+                    </a>
+            </div>
+
             <div class="card mb-4">
                 <div class="card-header">
                     <strong>Supplier Information</strong>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('supplier.update', $supplier->id) }}">
-                        @csrf
-                        @method('PUT')
-                        <div class="mb-3">
-                            <label for="address" class="form-label"><strong>Address</strong></label>
-                            <input type="text" class="form-control" id="address" name="address" value="{{ $supplier->address }}">
-                        </div>
-                        {{-- Add profile photo upload if needed --}}
-                        <button type="submit" class="btn btn-primary">Update Address</button>
-                    </form>
+                    <div class="mb-3"> <label for="address" class="form-label"><strong>Address</strong></label> 
+                    <p>{{ $supplier->address}}</p>
+                    </div>
                 </div>
             </div>
             <div class="card mb-4">
@@ -43,8 +40,14 @@
                     <strong>Statistics</strong>
                 </div>
                 <div class="card-body">
-                    <p><strong>Total Contracts:</strong> {{ $supplier->totalContracts ?? $supplier->contracts->count() }}</p>
-                    <p><strong>Average Performance Rating:</strong> {{ number_format($supplier->averageRating ?? $supplier->performanceRecords->avg('rating'), 2) }}</p>
+                    <p><strong>Total Contracts:</strong> {{ $supplier->contracts->count() }}</p>
+                    @if($supplier->performances && $supplier->performances->isNotEmpty())
+                       <p><strong>Average Performance Rating:</strong>
+                           {{ number_format($supplier->performances->avg('rating'), 2) }}
+                       </p>
+                    @else
+                    <p><strong>Average Performance Rating:</strong> <em>No Performance Record</em></p>
+                    @endif                
                 </div>
             </div>
         </div>
@@ -57,23 +60,34 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>File</th>
+                                <th>Contract Number</th>
                                 <th>Status</th>
                                 <th>Uploaded By</th>
                                 <th>Uploaded At</th>
                             </tr>
                         </thead>
                         <tbody>
+                        @if($supplier->contracts && $supplier->contracts->isNotEmpty())
                             @foreach($supplier->contracts as $contract)
                                 <tr>
-                                    <td><a href="{{ $contract->file_url }}" target="_blank">View</a></td>
+                                    <td>{{ $contract->contract_number }}</td>
                                     <td>{{ ucfirst($contract->status) }}</td>
-                                    <td>{{ $contract->uploaded_by }}</td>
+                                    <td>{{ $contract->addedBy ? $contract->addedBy->name : 'N/A' }}</td>
                                     <td>{{ $contract->created_at->format('d M Y, H:i') }}</td>
                                 </tr>
                             @endforeach
-                        </tbody>
+                         @else
+    			 <tr>
+       				 <td colspan="4" class="text-muted text-center"><em>No Contracts Found</em></td>
+   			 </tr>
+			 @endif
+
+                         </tbody>
                     </table>
+                <div class="d-flex justify-content-start gap-3 mt-3">
+                    <a href="{{ route('supplier.contracts.index') }}" class="btn btn-outline-primary">
+        			View Contracts
+    		    </a>
                 </div>
             </div>
             <div class="card mb-4">
@@ -84,23 +98,35 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Note</th>
+				<th>Note</th>
                                 <th>Rating</th>
                                 <th>Created By</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($supplier->performanceRecords as $record)
+			 @if($supplier->performances && $supplier->performances->isNotEmpty())
+                            @foreach($supplier->performances as $record)
                                 <tr>
-                                    <td>{{ $record->performance_note }}</td>
+				    <td>{{ \Illuminate\Support\Str::words($record->performance_note, 2, '...') }}</td>
                                     <td>{{ $record->rating }}</td>
-                                    <td>{{ $record->created_by }}</td>
+                                    <td>{{ $record->createdBy->name }}</td>
                                     <td>{{ $record->created_at->format('d M Y, H:i') }}</td>
                                 </tr>
                             @endforeach
+                        @else
+ 			<tr>
+                            <td colspan="4" class="text-muted text-center"><em>No Performance Records</em></td>
+    			</tr>
+			@endif
                         </tbody>
                     </table>
+		<div class="d-flex justify-content-start gap-3 mt-3">
+   			<a href="{{ route('supplier.performance') }}" class="btn btn-outline-success">
+                                View Performance
+                        </a>
+                </div>
+
                 </div>
             </div>
         </div>

@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Performance extends Model
 {
-    protected $fillable=['supplier_id,performance_note','rating','created_by'];
+    protected $fillable=[
+       'supplier_id',
+       'performance_note',
+       'rating',
+       'created_by',
+    ];
+
     public function supplier(){
         return $this->belongsTo(Supplier::class);
     }

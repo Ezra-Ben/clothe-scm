@@ -1,23 +1,33 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-               </div>
-         <div class="mt-6">
-                     <a href="{{ route('vendor.form') }}" class="btn-primary">
-                            Apply as Vendor
-                     </a>
-                   {{--  <a href="{{ route('supplier.dashboard') }} class="btn-  primary">Supplier Dashboard</a> --}}
-                </div>
+@section('header')
+    <h2 class="h4 fw-semibold text-dark mb-0">
+        {{ __('Dashboard') }}
+    </h2>
+@endsection
+
+@section('content')
+<div class="py-4">
+    <div class="container">
+        <div class="card shadow-sm">
+            <div class="card-body text-dark">
+                {{ __("You're logged in!") }}
+            </div>
         </div>
+
+        <div class="d-flex justify-content-center my-3 gap-3">
+        @can('manage-suppliers')
+        <a href="{{ route('admin.select.supplier') }}" class="btn btn-primary">
+            Manage Suppliers
+        </a>
+        @else
+        @if(!auth()->user()->vendor || !auth()->user()->vendor->supplier)
+            <a href="{{ route('vendor.register') }}" class="btn btn-primary">
+                Apply as Vendor
+            </a>
+        @endif
+        @endcan
     </div>
-</x-app-layout>
+    </div>
+</div>
+@endsection

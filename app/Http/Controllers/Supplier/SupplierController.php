@@ -8,25 +8,38 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class SupplierController extends Controller
-{
-    public function profile($id)
-    {
-        $supplier = Supplier::with('vendor')->findOrFail($id);
-        return view('supplier.profile', compact('supplier'));
-    }
+{   
+    public function profile($id = null) {
 
-    public function dashboard($id)
+    $supplier = $id 
+            ? Supplier::with(['vendor', 'addedBy'])->findOrFail($id)
+            : auth()->user()->vendor->supplier()->with(['vendor', 'addedBy'])->first();         
+
+    return view('supplier.profile', compact('supplier'));
+    }
+    
+    public function dashboard($id = null)
     {
-       $supplier = SupplierService::getDashboardData($id);
+    $supplier = $id
+            ? Supplier::with(['vendor', 'addedBy', 'contracts.addedBy', 'performances.createdBy'])->findOrFail($id)
+            : auth()->user()->vendor->supplier()->with(['vendor', 'addedBy', 'contracts.addedBy', 'performances.createdBy'])->first();
+
     return view('supplier.dashboard', compact('supplier'));
-       
     }
 
-    public function update(Request $request, $id)
-{
-    $supplier = Supplier::findOrFail($id);
-    $supplier->update($request->only('address'));
-    return redirect()->route('supplier.dashboard', $id)->with('success', 'Address updated!');
-}
+    public function update(Request $request)
+    {
+       $request->validate([
+        'address' => 'required|string|max:500',
+    ]);
+
+       $supplier = auth()->user()->vendor->supplier;
+       $supplier->address = $request->input('address');
+       $supplier->save();
+
+       return redirect()
+           ->route('supplier.profile')
+           ->with('address_updated', 'Supplier Address Updated Successfully!');
+    }
 
 }
