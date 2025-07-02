@@ -1,4 +1,5 @@
-<x-app-layout>
+@extends('layouts.app')
+@section('content')
     <div class="container mt-4">
         <h2>Procurement Delivery Confirmation</h2>
         <p>Product: <strong>{{ $request->product->name }}</strong></p>
@@ -15,4 +16,4 @@
             <div class="alert alert-warning">This request cannot be delivered at this stage.</div>
         @endif
     </div>
-</x-app-layout>
+@endsection

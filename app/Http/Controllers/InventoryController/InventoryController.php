@@ -8,6 +8,7 @@ use App\Models\Supplier;
 use App\Models\Inventory;
 use App\Models\ProcurementRequest;
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 
 
 class InventoryController extends Controller
@@ -187,4 +188,27 @@ public function productionCompleted(Request $request)
 
     return response()->json(['status' => 'success', 'message' => 'Production completed, stock updated,order status updated.']);
     }
+    public function createProductForm()
+{
+    return view('InventoryProcurement.CreateProduct');
+}
+
+    public function storeProduct(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'sku' => 'required|string|max:100|unique:products,sku',
+        'type' => 'required|in:raw,finished',
+        // Add other fields as needed
+    ]);
+
+    Product::create([
+        'name' => $request->name,
+         'sku' => $request->sku,
+        'type' => $request->type,
+        // Add other fields as needed
+    ]);
+
+    return redirect()->route('inventory.index')->with('success', 'Product created successfully.');
+}
 }

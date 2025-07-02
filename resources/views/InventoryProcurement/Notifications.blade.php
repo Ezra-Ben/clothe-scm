@@ -1,5 +1,7 @@
 {{-- filepath: resources/views/notifications/index.blade.php --}}
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
     <div class="container mt-4">
         <h2 class="mb-4 text-primary">Notifications</h2>
         <ul class="list-group">
@@ -13,4 +15,4 @@
             @endforelse
         </ul>
     </div>
-</x-app-layout>
+@endsection

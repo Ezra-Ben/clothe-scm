@@ -4,9 +4,30 @@ namespace App\Http\Controllers\InventoryController;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProcurementRequest;
+use Illuminate\Support\Facades\Auth;
+
 
 class SupplierController extends Controller
+
 {
+    public function dashboard()
+{
+    $user = auth()->user();
+    $supplier = $user->supplier; // Adjust if your relation is different
+
+    if ($supplier) {
+        $supplier->load([
+            'vendor',
+            'contracts.addedBy',
+            'performances.createdBy'
+        ]);
+    }
+
+    $notifications = $user->notifications()->latest()->take(10)->get();
+    $unread = $user->unreadNotifications->count();
+
+    return view('Supplier.dashboard', compact('supplier', 'notifications', 'unread'));
+}
     public function acceptProcurement($id)
     {
         $request = ProcurementRequest::findOrFail($id);
@@ -27,4 +48,5 @@ class SupplierController extends Controller
         }
         return redirect()->route('supplier.dashboard')->with('success', 'Procurement request cancelled.');
     }
+    
 }

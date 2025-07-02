@@ -1,5 +1,6 @@
 {{-- filepath: resources/views/suppliers/index.blade.php --}}
-<x-app-layout>
+@extends('layouts.app')
+@section('content')
     <div class="container mt-4">
         <h2 class="mb-4 text-primary">Suppliers</h2>
         <table class="table table-bordered bg-white">
@@ -20,7 +21,7 @@
                             {{ $supplier->is_active ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <td>{{ $supplier->last_supplied_at ? $supplier->last_supplied_at->format('Y-m-d') : 'Never' }}</td>
+                    <td>{{ $supplier->last_supplied_at ? \Carbon\Carbon::parse($supplier->last_supplied_at)->format('Y-m-d') : 'Never' }}</td>
                     <td>
                         @can('manage-inventory')
                             @if(!$supplier->is_active)
@@ -41,4 +42,4 @@
             </tbody>
         </table>
     </div>
-</x-app-layout>
+@endsection

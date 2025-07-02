@@ -1,5 +1,5 @@
-{{-- filepath: resources/views/procurement/requests/index.blade.php --}}
-<x-app-layout>
+@extends('layouts.app')
+@section('content')
     <div class="container mt-4">
         <h2 class="mb-4 text-primary">Procurement Requests</h2>
 
@@ -66,4 +66,4 @@
             </tbody>
         </table>
     </div>
-</x-app-layout>
+@endsection

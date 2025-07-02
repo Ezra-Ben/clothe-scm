@@ -1,7 +1,9 @@
 @extends('layouts.app')
-<x-app-layout>
+
+@section('content')
     <div class="container mt-4">
         <h2 class="mb-4 text-primary">Inventory Dashboard</h2>
+        <a href="{{ route('products.create') }}" class="btn btn-primary">Add New Product</a>
         <div class="row">
             <div class="col-md-3">
                 <div class="card text-center border-primary mb-3">
@@ -73,4 +75,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection 

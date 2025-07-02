@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
     <div class="container mt-4">
         <h2>Order Request #{{ $order->id }}</h2>
         <ul class="list-group mb-3">
@@ -11,4 +13,4 @@
         </div>
         <a href="{{ route('inventory.order.requests') }}" class="btn btn-secondary">Back to List</a>
     </div>
-</x-app-layout>
+@endsection

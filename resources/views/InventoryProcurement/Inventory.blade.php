@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('content')
     <div class="container mt-4">
         <h2 class="mb-4 text-primary">Inventory Overview</h2>
 
@@ -71,4 +73,4 @@
             </tbody>
         </table>
     </div>
-</x-app-layout>
+@endsection

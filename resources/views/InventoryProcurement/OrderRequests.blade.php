@@ -1,4 +1,5 @@
-<x-app-layout>
+@extends('layouts.app')
+@section('content')
     <div class="container mt-4">
         <h2>Order Requests</h2>
         <table class="table table-bordered">
@@ -28,4 +29,4 @@
             </tbody>
         </table>
     </div>
-</x-app-layout>
+@endsection

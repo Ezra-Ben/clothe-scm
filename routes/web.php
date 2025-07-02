@@ -32,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/supplier/contracts', [ContractController::class, 'index'])->name('supplier.contracts.index');
         Route::get('/supplier/contracts/{contractId}', [ContractController::class, 'show'])->name('supplier.contracts.show');
     });
-
+        Route::get('/supplier/dashboard', [\App\Http\Controllers\InventoryController\SupplierController::class, 'dashboard'])->name('supplier.dashboard');
     // Editable views (admin or supplier_manager)
     Route::middleware(['can:manage-suppliers'])->group(function () {
         Route::get('/supplier/select', [AdminSupplierController::class, 'select'])->name('admin.select.supplier');
@@ -52,6 +52,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/supplier/procurement/form/{id}', [SupplierController::class, 'showProcurementForm'])->name('supplier.procurement.form');
     Route::post('/supplier/procurement/deliver/{id}', [SupplierController::class, 'deliverProcurement'])->name('supplier.procurement.deliver');
     Route::middleware(['can:manage-inventory'])->group(function () {
+
+
     Route::get('/suppliers', [SupplierManagementController::class, 'index'])->name('suppliers.index');
     Route::post('/suppliers/{id}/activate', [SupplierManagementController::class, 'activate'])->name('suppliers.activate');
     Route::post('/suppliers/{id}/deactivate', [SupplierManagementController::class, 'deactivate'])->name('suppliers.deactivate');
@@ -64,6 +66,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Inventory Management
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+     Route::get('/products/create', [InventoryController::class, 'createProductForm'])->name('products.create');
+    Route::post('/products', [InventoryController::class, 'storeProduct'])->name('products.store');
+});
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -74,8 +79,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/inventory/order-requests/{id}', [InventoryController::class, 'showOrderRequest'])->name('inventory.order.requests.show');
     Route::post('/inventory/add', [InventoryController::class, 'addProduct'])->name('inventory.add');
     Route::delete('/inventory/{id}', [InventoryController::class, 'deleteProduct'])->name('inventory.delete');
+    
 
 });
-});
+
 
 require __DIR__.'/auth.php';
