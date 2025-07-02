@@ -11,6 +11,9 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
            $table->foreignId('role_id')->nullable()->constrained()->onDelete('set null');
         });
+       // Schema::table('users', function (Blueprint $table) {
+          // $table->foreignId('role_id')->nullable()->constrained()->onDelete('set null');
+        //});
     }
 
     
@@ -18,6 +21,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
+             $table->dropConstrainedForeignId('role_id');
         });
     }
 };

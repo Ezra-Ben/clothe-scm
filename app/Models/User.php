@@ -74,6 +74,7 @@ class User extends Authenticatable
     public function hasRole(string $name)
     {
     return $this->role && $this->role->name === $name;
+    return $this->role === $name;
     }
 
 

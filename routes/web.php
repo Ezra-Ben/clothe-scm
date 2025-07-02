@@ -7,6 +7,15 @@ use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Supplier\SupplierController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+<<<<<<< HEAD
+=======
+use App\Http\Controllers\ProductionDashboardController;
+use App\Http\Controllers\ProductionOrderController;
+use App\Http\Controllers\BomController;
+use App\Http\Controllers\ReportingController;
+use App\Http\Controllers\OrderRequestController; 
+use App\Http\Controllers\InventoryNotificationController;
+>>>>>>> 72b54fa (Temp: save untracked work before switching to main)
 
 Route::view('/', 'welcome');
 
@@ -46,5 +55,40 @@ Route::middleware(['auth'])->group(function () {
         Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('vendor.register');
 
 });
+<<<<<<< HEAD
+=======
+
+Route::get('/production', [ProductionDashboardController::class, 'index'])
+  ->name('production.dashboard');
+Route::patch('/production/{id}/complete', [ProductionDashboardController::class, 'complete'])
+ ->name('production.complete');
+
+ Route::middleware(['auth'])->group(function () {
+    Route::get('/production', [ProductiondashboardController::class, 'dashboard'])
+        ->name('production.dashboard');
+});
+
+Route::get('/dashboard/production', [ProductionDashboardController::class, 'index'])->name('dashboard.production');
+Route::put('/production-orders/{productionOrder}/complete', [ProductionDashboardController::class, 'complete'])->name('production_orders.complete');
+
+
+Route::resource('production-orders', ProductionOrderController::class)->except(['create', 'store']); 
+
+Route::resource('boms', BomController::class); 
+Route::get('/order-requests' ,function(){/**/})
+->name('order_requests.index');
+
+Route::get('/reports/production', [ReportingController::class, 'productionReports'])
+->name('reports.production');
+Route::get('/order-requests', [OrderRequestController::class, 'index'])->name('order_requests.index');
+
+Route::get('/production-orders/{productionOrder}', [ProductionOrderController::class, 'show'])->name('production_orders.show');
+Route::resource('boms', BomController::class); 
+Route::get('/reports/production', [ReportingController::class, 'productionReports'])->name('reports.production');
+
+
+
+
+>>>>>>> 72b54fa (Temp: save untracked work before switching to main)
 require __DIR__.'/auth.php';
 

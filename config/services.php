@@ -34,5 +34,14 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+       'pms' => [
+        'token' => env('PMS_WEBHOOK_TOKEN'), // This secret allows Inventory to send to Production
+    ],
+
+    'inventory' => [
+        'webhook_url' => env('INVENTORY_WEBHOOK_URL'), // URL where Production sends to Inventory
+        'token' => env('INVENTORY_WEBHOOK_TOKEN'), // Secret Production uses to send to Inventory
+    ],
+ 
 
 ];

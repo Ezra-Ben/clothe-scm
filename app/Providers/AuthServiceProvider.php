@@ -22,6 +22,9 @@ class AuthServiceProvider extends ServiceProvider
 	Gate::define('view-readonly', function (User $user) {
             return $user->hasRole('supplier'); 
 	});
-
+    //Gate to access production dashboard
+       Gate::define('access-production', function ($user) {
+        return $user->role === 'admin';
+    	});
     }
 }
