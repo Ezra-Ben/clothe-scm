@@ -5,6 +5,7 @@ use App\Http\Controllers\Supplier\PerformanceController;
 use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Supplier\SupplierController;
+use App\Http\Controllers\InventoryController\SupplierManagementController ;
 use App\Http\Controllers\InventoryController\SupplierController as InventorySupplierController;
 use App\Http\Controllers\InventoryController\ProcurementController;
 use App\Http\Controllers\InventoryController\InventoryController;
@@ -46,15 +47,20 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('vendor/register', [VendorController::class, 'showForm'])->name('vendor.form');
     Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('vendor.register');
-
-    Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
-    Route::post('/suppliers/{id}/activate', [SupplierController::class, 'activate'])->name('suppliers.activate');
-    Route::post('/suppliers/{id}/deactivate', [SupplierController::class, 'deactivate'])->name('suppliers.deactivate');
+    Route::get('/supplier/procurement/accept/{id}', [SupplierController::class, 'acceptProcurement'])->name('supplier.procurement.accept');
+    Route::get('/supplier/procurement/cancel/{id}', [SupplierController::class, 'cancelProcurement'])->name('supplier.procurement.cancel');
+    Route::get('/supplier/procurement/form/{id}', [SupplierController::class, 'showProcurementForm'])->name('supplier.procurement.form');
+    Route::post('/supplier/procurement/deliver/{id}', [SupplierController::class, 'deliverProcurement'])->name('supplier.procurement.deliver');
+    Route::middleware(['can:manage-inventory'])->group(function () {
+    Route::get('/suppliers', [SupplierManagementController::class, 'index'])->name('suppliers.index');
+    Route::post('/suppliers/{id}/activate', [SupplierManagementController::class, 'activate'])->name('suppliers.activate');
+    Route::post('/suppliers/{id}/deactivate', [SupplierManagementController::class, 'deactivate'])->name('suppliers.deactivate');
 
     // Procurement Requests (Admin Approval)
     Route::get('/procurement/requests', [ProcurementController::class, 'index'])->name('procurement.requests.index');
     Route::post('/procurement/approve/{id}', [ProcurementController::class, 'approve'])->name('procurement.approve');
     Route::post('/procurement/reject/{id}', [ProcurementController::class, 'reject'])->name('procurement.reject');
+    Route::post('/admin/procurement/confirm-delivery/{id}', [ProcurementController::class, 'confirmDelivery'])->name('admin.procurement.confirmDelivery');
 
     // Inventory Management
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
@@ -62,7 +68,14 @@ Route::middleware(['auth'])->group(function () {
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-    Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead'); 
+    Route::get('/admin/inventory/dashboard', [InventoryController::class, 'dashboard'])->name('admin.inventory.dashboard');
+    Route::get('/admin/inventory/order-requests', [InventoryController::class, 'orderRequests'])->name('inventory.order.requests');
+    Route::get('/admin/inventory/order-requests/{id}', [InventoryController::class, 'showOrderRequest'])->name('inventory.order.requests.show');
+    Route::post('/inventory/add', [InventoryController::class, 'addProduct'])->name('inventory.add');
+    Route::delete('/inventory/{id}', [InventoryController::class, 'deleteProduct'])->name('inventory.delete');
+
+});
 });
 
 require __DIR__.'/auth.php';

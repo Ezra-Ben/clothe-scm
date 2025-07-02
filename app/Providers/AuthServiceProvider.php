@@ -17,6 +17,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('manage-suppliers', function (User $user) {
             return $user->hasRole('supplier_manager') || $user->hasRole('admin');
         });
+        Gate::define('manage-inventory', function (User $user) {
+            return $user->hasRole('inventory_manager') || $user->hasRole('admin');
+        });
 
         //Gate to view readonly pages(only supplier)
 	Gate::define('view-readonly', function (User $user) {

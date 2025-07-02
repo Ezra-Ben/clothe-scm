@@ -56,7 +56,8 @@ class ProcurementController extends Controller
             $request->approved_at = now();
             $request->save();
             if ($request->supplier && $request->supplier->user) {
-    $request->supplier->user->notify(new ProcurementRequestApproved());
+            $request->supplier->user->notify(new ProcurementRequestApproved($request));
+            return redirect()->back()->with('success', 'Procurement request approved.');
 }
             return response()->json(['status' => 'approved']);
         } catch (\Exception $e) {
@@ -77,6 +78,28 @@ class ProcurementController extends Controller
          if ($request->supplier && $request->supplier->user) {
             $request->supplier->user->notify(new ProcurementRequestApproved());
         }
-        return response()->json(['status' => 'rejected']);
+        return redirect()->back()->with('success', 'Procurement request rejected.');
+    }
+     public function confirmDelivery(Request $request, $id)
+    {
+    $procRequest = ProcurementRequest::findOrFail($id);
+
+    if ($procRequest->status !== 'delivery_accepted') {
+        return redirect()->back()->with('error', 'Cannot confirm delivery at this stage.');
+    }
+
+    // Update inventory
+    $inventory = \App\Models\Inventory::firstOrCreate(['product_id' => $procRequest->product_id]);
+    $inventory->quantity += $procRequest->quantity;
+    $inventory->save();
+
+    // Set status to delivered
+    $procRequest->status = 'delivered';
+    $procRequest->save();
+
+    // Optionally, trigger production if there are pending orders for this product
+    // (You can implement logic here to check for pending orders and call triggerProduction)
+
+    return redirect()->back()->with('success', 'Procurement marked as delivered and stock updated.');
     }
 }

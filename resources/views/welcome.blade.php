@@ -20,7 +20,7 @@
     <section 
         class="min-vh-100 d-flex align-items-center justify-content-center text-white"
         style="background: url('{{ asset('images/background.jpg') }}') no-repeat center center / cover;">
-        <div class="bg-dark bg-opacity-75 p-5 rounded text-center w-100" style="max-width: 600px;">
+        <div class="bg-dark bg-opacity-75 p-5 rounded text-center w-100" style="max-inline-size: 600px;">
             <h1 class="display-4 mb-4">{!! nl2br(e("Welcome to \n J-Clothes")) !!}</h1>
             <p class="lead mb-4">
                 Discover high-quality textiles and garments crafted for style and durability. Join us today and elevate your fashion business!

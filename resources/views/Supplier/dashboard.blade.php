@@ -1,5 +1,29 @@
 @extends('layouts.app')
-
+<div class="dropdown float-end me-4">
+    <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-bell"></i>
+        @php $unread = auth()->user()->unreadNotifications->count(); @endphp
+        @if($unread)
+            <span class="badge bg-danger">{{ $unread }}</span>
+        @endif
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="min-inline-size: 350px;">
+        @forelse(auth()->user()->notifications->take(10) as $notification)
+            <li class="dropdown-item">
+                {{ $notification->data['message'] ?? 'Notification' }}
+                <div class="mt-2">
+                    @if(isset($notification->data['actions']))
+                        <a href="{{ $notification->data['actions']['accept_url'] }}" class="btn btn-success btn-sm">Accept</a>
+                        <a href="{{ $notification->data['actions']['cancel_url'] }}" class="btn btn-danger btn-sm">Cancel</a>
+                    @endif
+                </div>
+                <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+            </li>
+        @empty
+            <li class="dropdown-item text-muted">No notifications</li>
+        @endforelse
+</ul>
+</div>
 @section('content')
 <div class="container">
     <h2>Supplier Dashboard</h2>

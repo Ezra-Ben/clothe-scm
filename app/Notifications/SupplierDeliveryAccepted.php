@@ -4,7 +4,7 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class ProcurementRequestApproved extends Notification
+class SupplierDeliveryAccepted extends Notification
 {
     use Queueable;
     public $procurementRequest;
@@ -22,11 +22,10 @@ class ProcurementRequestApproved extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => "Procurement request #{$this->procurementRequest->id} approved by admin.",
+            'message' => "Supplier has accepted delivery for procurement request #{$this->procurementRequest->id}.",
             'procurement_request_id' => $this->procurementRequest->id,
             'actions' => [
-                'accept_url' => route('supplier.procurement.accept', $this->procurementRequest->id),
-                'cancel_url' => route('supplier.procurement.cancel', $this->procurementRequest->id),
+                'confirm_url' => route('admin.procurement.confirmDelivery', $this->procurementRequest->id),
             ]
         ];
     }

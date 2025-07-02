@@ -1,31 +1,30 @@
 <?php
+
 namespace App\Http\Controllers\InventoryController;
 
 use App\Http\Controllers\Controller;
-use App\Models\Supplier;
-use Illuminate\Http\Request;
+use App\Models\ProcurementRequest;
 
 class SupplierController extends Controller
 {
-    public function index()
+    public function acceptProcurement($id)
     {
-        $suppliers = Supplier::all();
-        return view('InventoryProcurement.Supplier_management', compact('suppliers'));
+        $request = ProcurementRequest::findOrFail($id);
+        if ($request->status !== 'approved') {
+            return redirect()->route('supplier.dashboard')->with('error', 'Request not available for acceptance.');
+        }
+        $request->status = 'accepted';
+        $request->save();
+        return redirect()->route('supplier.procurement.form', $id);
     }
 
-    public function activate($id)
+    public function cancelProcurement($id)
     {
-        $supplier = Supplier::findOrFail($id);
-        $supplier->is_active = true;
-        $supplier->save();
-        return redirect()->back()->with('success', 'Supplier activated.');
-    }
-
-    public function deactivate($id)
-    {
-        $supplier = Supplier::findOrFail($id);
-        $supplier->is_active = false;
-        $supplier->save();
-        return redirect()->back()->with('success', 'Supplier deactivated.');
+        $request = ProcurementRequest::findOrFail($id);
+        if ($request->status === 'approved') {
+            $request->status = 'cancelled';
+            $request->save();
+        }
+        return redirect()->route('supplier.dashboard')->with('success', 'Procurement request cancelled.');
     }
 }

@@ -22,7 +22,7 @@
                     </td>
                     <td>{{ $supplier->last_supplied_at ? $supplier->last_supplied_at->format('Y-m-d') : 'Never' }}</td>
                     <td>
-                        @can('manage-suppliers')
+                        @can('manage-inventory')
                             @if(!$supplier->is_active)
                                 <form method="POST" action="{{ route('suppliers.activate', $supplier->id) }}" class="d-inline">
                                     @csrf

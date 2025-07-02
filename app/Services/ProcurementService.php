@@ -5,15 +5,16 @@ use App\Models\Supplier;
 use App\Models\ProcurementRequest;
 use App\Models\ProcurementDelivery;
 use App\Models\Inventory;
+use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 
 class ProcurementService
 {
-    public function createProcurementRequest($productId, $quantity)
+    public function createProcurementRequest($productId, $quantity, $orderId = null)
     {  
         if ($quantity <= 0) {
-        throw new \InvalidArgumentException('Quantity must be positive.');
-    }
+            throw new \InvalidArgumentException('Quantity must be positive.');
+        }
         $supplier = $this->getNextSupplier();
         return ProcurementRequest::create([
             'product_id' => $productId,
@@ -21,6 +22,7 @@ class ProcurementService
             'requested_quantity' => $quantity,
             'status' => 'pending',
             'supplier_id' => $supplier->id,
+            'order_id' => $orderId,
         ]);
     }
 
@@ -47,6 +49,21 @@ class ProcurementService
         // Update procurement request status
         $request->status = 'delivered';
         $request->save();
+
+        // --- AUTOMATION: Trigger production for pending orders ---
+        $pendingOrders = Order::where('product_id', $request->product_id)
+            ->whereIn('status', ['production', 'pending'])
+            ->orderBy('created_at')
+            ->get();
+
+        foreach ($pendingOrders as $order) {
+            // Check if enough raw materials for this order
+            if (app(\App\Services\InventoryService::class)->canProduce($order->product_id, $order->quantity) === []) {
+                app(\App\Services\InventoryService::class)->triggerProduction($order->product_id, $order->quantity, $order->id);
+                // Optionally update order status if needed
+            }
+        }
+
         return $delivery;
     }
 }

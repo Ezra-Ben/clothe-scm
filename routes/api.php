@@ -4,7 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InventoryController\InventoryController;
 use App\Http\Controllers\InventoryController\ProcurementController;
-use App\Http\Controllers\InventoryController\SupplierController;
+use App\Http\Controllers\InventoryController\SupplierManagementController;
 use App\Http\Controllers\InventoryController\NotificationController;
 
 
@@ -22,11 +22,6 @@ Route::post('/procurement/approve/{id}', [ProcurementController::class, 'approve
 Route::post('/procurement/reject/{id}', [ProcurementController::class, 'reject']);
 Route::get('/procurement/requests', [ProcurementController::class, 'index']);
 
-// Supplier APIs
-Route::get('/suppliers', [SupplierController::class, 'index']);
-Route::post('/suppliers/{id}/activate', [SupplierController::class, 'activate']);
-Route::post('/suppliers/{id}/deactivate', [SupplierController::class, 'deactivate']);
-
 // Notification APIs
 Route::get('/notifications', [NotificationController::class, 'index']);
 
@@ -34,3 +29,4 @@ Route::get('/notifications', [NotificationController::class, 'index']);
 Route::get('/test', function () {
     return response()->json(['message' => 'API is working']);
 });
+Route::post('/production/completed', [InventoryController::class, 'productionCompleted']);

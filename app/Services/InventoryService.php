@@ -43,12 +43,13 @@ class InventoryService
     return $missing; 
 }
 
-public function triggerProduction($finishedProductId, $quantity)
+public function triggerProduction($finishedProductId, $quantity,$orderId = null)
 {
     
     Http::post('http://localhost:8000/api/start-production', [
         'product_id' => $finishedProductId,
         'quantity' => $quantity,
+        'order_id' => $orderId, // Assuming order_id is not needed here, adjust as necessary
     ]);
 }
 

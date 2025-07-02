@@ -27,26 +27,53 @@ class InventoryController extends Controller
 {
     $productId = $request->input('product_id');
     $quantity = $request->input('quantity');
-
+    $customerId = $request->input('customer_id');
+    
+     $order = \App\Models\Order::create([
+        'product_id' => $productId,
+        'customer_id' => $customerId,
+        'quantity' => $quantity,
+        'status' => 'pending',
+    ]);
 
     if ($this->inventory->hasEnoughStock($productId, $quantity)) {
         $this->inventory->reserveStock($productId, $quantity);
         return response()->json(['status' => 'reserved']);
+        $order->save();
+        return response()->json([
+            'order_id' => $order->id,
+            'status' => 'reserved',
+            'message' => 'Order successfully received. Product is available and reserved for delivery.'
+        ]);
     }
 
     
     $missing = $this->inventory->canProduce($productId, $quantity);
     if (empty($missing)) {
         // 3. Trigger production
-        $this->inventory->triggerProduction($productId, $quantity);
-        return response()->json(['status' => 'production_triggered']);
+        $this->inventory->triggerProduction($productId, $quantity,$order->id);
+        $order->status = 'production';
+        $order->save();
+
+        return response()->json([
+            'order_id' => $order->id,
+            'status' => 'production_triggered',
+            'message' => 'Order received. Product is being produced for your order.'
+        ]);
     }
 
     // 4. Trigger procurement for missing raw materials
     foreach ($missing as $rawId => $qty) {
-        app(ProcurementService::class)->createProcurementRequest($rawId, $qty);
+        app(ProcurementService::class)->createProcurementRequest($rawId, $qty,$order->id);
     }
-    return response()->json(['status' => 'procurement_triggered', 'missing' => $missing]);
+    $order->status = 'procurement';
+    $order->save();
+   return response()->json([
+        'order_id' => $order->id,
+        'status' => 'procurement_triggered',
+        'missing' => $missing,
+        'message' => 'Order received. Procurement for missing materials has started for your order.'
+    ]);
 }
 
     public function checkProductExists($productId)
@@ -82,11 +109,82 @@ class InventoryController extends Controller
     $inventoryCount =Inventory::count();
     $notificationCount = auth()->user()->notifications()->count();
 
-    return view('InventoryProcurement.Dashboard', compact(
-        'supplierCount',
-        'pendingProcurements',
-        'inventoryCount',
-        'notificationCount'
-    ));
+        return view('InventoryProcurement.Dashboard', compact(
+            'supplierCount',
+            'pendingProcurements',
+            'inventoryCount',
+            'notificationCount'
+        ));
+    }
+        public function orderRequests()
+        {
+        // Assuming you have an OrderRequest model, or use ProcurementRequest if that's what you mean
+        $orderRequests = \App\Models\Order::orderByDesc('created_at')->get();
+        return view('InventoryProcurement.OrderRequests', compact('orderRequests'));
+        }
+
+    public function showOrderRequest($id)
+   {
+    $order = \App\Models\Order::findOrFail($id);
+
+    // Determine status message
+    if ($order->status === 'reserved') {
+        $message = 'Product has been reserved.';
+    } elseif ($order->status === 'production') {
+        $message = 'Production is in progress.';
+    } elseif ($order->status === 'procurement') {
+        $message = 'Procurement request is in progress.';
+    } else {
+        $message = 'Order status: ' . ucfirst($order->status);
+    }
+
+    return view('InventoryProcurement.OrderRequestDetail', compact('order', 'message'));
+    }
+    public function addProduct(Request $request)
+{
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'quantity' => 'required|integer|min:1',
+    ]);
+    $inventory = Inventory::firstOrCreate(
+        ['product_id' => $request->product_id],
+        ['quantity' => 0]
+    );
+    $inventory->quantity += $request->quantity;
+    $inventory->save();
+
+    return redirect()->back()->with('success', 'Product added to inventory.');
+    }
+    public function deleteProduct($id)
+{
+    $inventory = Inventory::findOrFail($id);
+    $inventory->delete();
+
+    return redirect()->back()->with('success', 'Product removed from inventory.');
 }
+public function productionCompleted(Request $request)
+{
+    if ($request->header('X-PMS-Token') !== config('services.pms.token')) {
+        abort(403, 'Unauthorized');
+    }
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'quantity_produced' => 'required|integer|min:1',
+        'order_id' => 'required|exists:orders,id',
+        // Optionally: 'order_id' => 'sometimes|exists:order_requests,id'
+    ]);
+
+    // Use your InventoryService to increase stock
+    app(\App\Services\InventoryService::class)->increaseStock(
+        $request->product_id,
+        $request->quantity_produced
+    );
+    $order = \App\Models\Order::find($request->order_id);
+    if ($order) {
+        $order->status = 'ready'; // or 'delivered', as appropriate
+        $order->save();
+    }
+
+    return response()->json(['status' => 'success', 'message' => 'Production completed, stock updated,order status updated.']);
+    }
 }

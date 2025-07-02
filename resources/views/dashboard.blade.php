@@ -20,6 +20,12 @@
         <a href="{{ route('admin.select.supplier') }}" class="btn btn-primary">
             Manage Suppliers
         </a>
+        @endcan
+        @can('manage-inventory')
+        <a href="{{ route('admin.inventory.dashboard') }}" class="btn btn-primary">
+            Manage Inventory
+        </a>
+        @endcan
         @else
         @if(!auth()->user()->vendor || !auth()->user()->vendor->supplier)
             <a href="{{ route('vendor.register') }}" class="btn btn-primary">
