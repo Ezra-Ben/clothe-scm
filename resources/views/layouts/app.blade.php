@@ -31,6 +31,17 @@
         </main>
     </div>
 
+    <!-- Bottom Navigation Bar -->
+    <nav class="navbar fixed-bottom navbar-light bg-light border-top shadow-sm">
+        <div class="container d-flex justify-content-around">
+            <a class="nav-link" href="{{ route('orders.index') }}">Orders</a>
+            <a class="nav-link" href="{{ route('inventory.index') }}">Inventory</a>
+            <a class="nav-link" href="{{ route('payments.index') }}">Payments</a>
+            <a class="nav-link" href="{{ route('shipments.index') }}">Shipments</a>
+            <a class="nav-link" href="{{ route('refunds.index') }}">Refunds</a>
+        </div>
+    </nav>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
