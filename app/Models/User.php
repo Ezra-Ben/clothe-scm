@@ -71,10 +71,22 @@ class User extends Authenticatable
     return $this->hasOne(Vendor::class);
     }
 
-    public function hasRole(string $name)
-    {
-    return $this->role && $this->role->name === $name;
-    }
+    public function hasRole($role)
+{
+    return $this->role === $role;
+}
 
 
+    public function isCarrier()
+{
+    return $this->role && $this->role->name === 'carrier';
+}
+public function isCustomer()
+{
+    return $this->role && $this->role->name === 'customer';
+}
+public function carrier()
+{
+    return $this->hasOne(\App\Models\Carrier::class);
+}
 }

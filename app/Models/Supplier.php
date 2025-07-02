@@ -6,9 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 class Supplier extends Model
 {
     protected $fillable = [
-       'vendor_id', 
-       'address', 
-       'added_by',
+      'address','name',
+        'contact_person',
+        'email',
+        'phone',
+        'lead_time_days',
+        'contract_terms'
+    ];
+
+    protected $casts = [
+        'lead_time_days' => 'integer'
     ];
 
     public function vendor()
@@ -31,4 +38,16 @@ class Supplier extends Model
     {
         return $this->belongsTo(User::class, 'added_by');
     }
+
+     public function orders(): HasMany
+    {
+        return $this->hasMany(SupplierOrder::class);
+    }
+
+    public function shipments(): HasMany
+    {
+        return $this->hasMany(InboundShipment::class);
+    }
+
+
 }
