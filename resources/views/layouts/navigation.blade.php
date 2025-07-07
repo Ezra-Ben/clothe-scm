@@ -19,8 +19,40 @@
                 <li class="nav-item">
                     <a href="{{ auth()->user()->can('view-readonly') ? route('supplier.dashboard') : route('dashboard') }}"
                        class="nav-link {{ request()->routeIs('dashboard') || request()->routeIs('supplier.dashboard') ? 'active' : '' }}">
-                       {{ __('Dashboard') }}
+                       <i class="fas fa-tachometer-alt me-1"></i>{{ __('Dashboard') }}
                     </a>                
+                </li>
+                
+                <!-- Supply Chain Management -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="scmDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-cogs me-1"></i>Supply Chain
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="scmDropdown">
+                        <li>
+                            <a class="dropdown-item {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
+                                <i class="fas fa-box me-2"></i>Products
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ request()->routeIs('production-batches.*') ? 'active' : '' }}" href="{{ route('production-batches.index') }}">
+                                <i class="fas fa-industry me-2"></i>Production Batches
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ request()->routeIs('quality-controls.*') ? 'active' : '' }}" href="{{ route('quality-controls.index') }}">
+                                <i class="fas fa-check-circle me-2"></i>Quality Control
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                
+                <!-- Reports & Analytics -->
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="{{ route('reports.index') }}">
+                        <i class="fas fa-chart-line me-1"></i>Reports
+                    </a>
                 </li>
             </ul>
 	    @endauth
