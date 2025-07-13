@@ -4,7 +4,7 @@
     <!-- If logged in, show Dashboard button -->
     @auth
     <div class="bg-success bg-opacity-10 py-2 text-center">
-        @can('view-readonly')
+        @can('supplier')
         <a href="{{ route('supplier.dashboard') }}" class="btn btn-success">
             Go to Dashboard
         </a>
