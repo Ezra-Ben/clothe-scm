@@ -38,4 +38,29 @@ class InventoryController extends Controller
 
         return redirect()->route('inventory.index')->with('success', 'Inventory updated successfully.');
     }
+
+    // Show form to create new inventory
+    public function create()
+    {
+        $products = Product::all();
+        return view('inventory.create', compact('products'));
+    }
+
+    // Store new inventory record
+    public function store(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id|unique:inventories,product_id',
+            'quantity_on_hand' => 'required|numeric|min:0',
+            'quantity_reserved' => 'nullable|numeric|min:0',
+        ]);
+
+        Inventory::create([
+            'product_id' => $request->product_id,
+            'quantity_on_hand' => $request->quantity_on_hand,
+            'quantity_reserved' => $request->quantity_reserved ?? 0,
+        ]);
+
+        return redirect()->route('inventory.index')->with('success', 'Inventory created successfully.');
+    }
 }

@@ -55,7 +55,7 @@ Route::middleware(['auth'])->group(function () {
 
     //Inventory Routes
     Route::middleware(['can:manage-inventory'])->group(function () {
-        Route::resource('inventory', InventoryController::class)->only(['index', 'edit', 'update']);
+        Route::resource('inventory', InventoryController::class)->only(['index', 'create', 'store', 'edit', 'update']);
     });
 
     //Procurement Routes - Accessible to both suppliers and procurement managers
