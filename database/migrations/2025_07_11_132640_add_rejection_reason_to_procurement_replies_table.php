@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('procurement_replies', function (Blueprint $table) {
-            //
+            $table->text('rejection_reason')->nullable()->after('remarks');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('procurement_replies', function (Blueprint $table) {
-            //
+            $table->dropColumn('rejection_reason');
         });
     }
 };

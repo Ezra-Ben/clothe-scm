@@ -11,7 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        // Note: In MySQL, modifying ENUM requires recreating the column
+        Schema::table('procurement_requests', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
+        
+        Schema::table('procurement_requests', function (Blueprint $table) {
+            $table->enum('status', ['pending', 'approved', 'accepted', 'rejected', 'ordered', 'received'])->default('pending')->after('quantity');
+        });
     }
 
     /**
@@ -19,6 +26,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('procurement_requests', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
+        
+        Schema::table('procurement_requests', function (Blueprint $table) {
+            $table->enum('status', ['pending', 'approved', 'ordered', 'received'])->default('pending')->after('quantity');
+        });
     }
 };
