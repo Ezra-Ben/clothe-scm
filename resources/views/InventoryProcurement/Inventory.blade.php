@@ -73,4 +73,7 @@
             </tbody>
         </table>
     </div>
+@if(isset($users))
+    @include('components.chat-user-modal', ['users' => $users])
+@endif
 @endsection

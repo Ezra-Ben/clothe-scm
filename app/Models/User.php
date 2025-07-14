@@ -76,5 +76,19 @@ class User extends Authenticatable
     return $this->role && $this->role->name === $name;
     }
 
+    public function conversationsAsUserOne()
+{
+    return $this->hasMany(Conversation::class, 'user_one_id');
+}
+
+public function conversationsAsUserTwo()
+{
+    return $this->hasMany(Conversation::class, 'user_two_id');
+}
+
+public function messages()
+{
+    return $this->hasMany(Message::class, 'sender_id');
+}
 
 }

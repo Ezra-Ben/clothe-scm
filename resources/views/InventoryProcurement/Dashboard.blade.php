@@ -75,4 +75,14 @@
             </div>
         </div>
     </div>
-@endsection 
+    <button id="open-chat-list"
+    type="button"
+    data-bs-toggle="modal"
+    data-bs-target="#chatUserModal"
+    style="position:fixed; bottom:30px; right:30px; z-index:9999; background:#0d6efd; color:white; border:none; border-radius:50%; width:60px; height:60px; font-size:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+    💬
+</button>
+@if(isset($users))
+    @include('components.chat-user-modal', ['users' => $users])
+@endif
+@endsection

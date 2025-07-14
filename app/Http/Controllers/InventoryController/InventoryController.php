@@ -22,7 +22,8 @@ class InventoryController extends Controller
     public function index()
 {
     $inventories = Inventory::with('product')->get();
-    return view('InventoryProcurement.Inventory', compact('inventories'));
+    $users = app(\App\Http\Controllers\Chat\ChatController::class)->index()->getData()['users'];
+    return view('InventoryProcurement.Inventory', compact('inventories','users',));
 }
     public function handleOrderRequest(Request $request)
 {
@@ -109,12 +110,14 @@ class InventoryController extends Controller
     $pendingProcurements =ProcurementRequest::where('status', 'pending')->count();
     $inventoryCount =Inventory::count();
     $notificationCount = auth()->user()->notifications()->count();
+    $users = app(\App\Http\Controllers\Chat\ChatController::class)->index()->getData()['users'];
 
         return view('InventoryProcurement.Dashboard', compact(
             'supplierCount',
             'pendingProcurements',
             'inventoryCount',
-            'notificationCount'
+            'notificationCount',
+            'users'
         ));
     }
         public function orderRequests()

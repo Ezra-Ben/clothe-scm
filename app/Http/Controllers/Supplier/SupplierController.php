@@ -23,8 +23,8 @@ class SupplierController extends Controller
     $supplier = $id
             ? Supplier::with(['vendor', 'addedBy', 'contracts.addedBy', 'performances.createdBy'])->findOrFail($id)
             : auth()->user()->vendor->supplier()->with(['vendor', 'addedBy', 'contracts.addedBy', 'performances.createdBy'])->first();
-
-    return view('supplier.dashboard', compact('supplier'));
+    $users = app(\App\Http\Controllers\Chat\ChatController::class)->index()->getData()['users'];
+    return view('supplier.dashboard', compact('supplier','users'));
     }
 
     public function update(Request $request)
