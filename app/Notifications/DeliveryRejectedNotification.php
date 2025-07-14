@@ -45,8 +45,7 @@ class DeliveryRejectedNotification extends Notification implements ShouldQueue
             ->line('**Quantity:** ' . $this->reply->quantity_confirmed . ' units')
             ->line('**Rejection Reason:** ' . $this->reply->rejection_reason)
             ->action('View Details', url(route('procurement.requests.show', $this->reply->request->id)))
-            ->line('Please contact us to resolve this issue or arrange a replacement delivery.')
-            ->salutation('Regards, ' . config('app.name'));
+            ->line('Please contact us to resolve this issue or arrange a replacement delivery.');
     }
 
     /**

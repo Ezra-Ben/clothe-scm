@@ -46,8 +46,7 @@ class MaterialDeliveryNotification extends Notification implements ShouldQueue
             ->line('**Quantity:** ' . $this->reply->quantity_confirmed . ' units')
             ->line('**Expected Delivery:** ' . $this->reply->expected_delivery_date)
             ->action('Validate Delivery', url(route('procurement.replies.indexForRequest', $this->reply->request->id)))
-            ->line('Please validate the delivery once materials arrive to update inventory.')
-            ->salutation('Regards, ' . config('app.name'));
+            ->line('Please validate the delivery once materials arrive to update inventory.');
     }
 
     /**

@@ -39,7 +39,6 @@ class NewProcurementRequestNotification extends Notification implements ShouldQu
             ->subject('New Procurement Request')
             ->line('You have a new procurement request.')
             ->action('View Request', url(route('procurement.requests.show', $this->request->id)))
-            ->line('Please log in to accept it.')
-            ->salutation('Regards, ' . config('app.name'));
+            ->line('Please log in to accept it.');
     }
 }

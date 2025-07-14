@@ -36,8 +36,7 @@ class DeliveryAcceptedNotification extends Notification implements ShouldQueue
             ->line('- Status: Delivered & Accepted')
             ->line('The materials have been added to inventory and production planning has been updated.')
             ->action('View Reply Details', url(route('procurement.replies.show', $this->reply->id)))
-            ->line('Thank you for your quality delivery!')
-            ->salutation('Regards, ' . config('app.name'));
+            ->line('Thank you for your quality delivery!');
     }
 
     public function toArray($notifiable)
