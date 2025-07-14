@@ -26,6 +26,9 @@
     
     <!-- Dashboard Styles -->
     <link rel="stylesheet" href="{{ asset('css/dashboard-styles.css') }}">
+    
+    <!-- Carousel Caption Styles -->
+    <link rel="stylesheet" href="{{ asset('css/carousel-captions.css') }}">
 
     @stack('styles')
 </head>

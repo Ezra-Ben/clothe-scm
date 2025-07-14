@@ -1,0 +1,14 @@
+/* Enhanced Carousel Caption Styles */
+
+/* Only change text colors - keep Bootstrap positioning intact */
+.carousel-caption h5 {
+    color: #ffff00 !important; /* Bright yellow - stands out on most images */
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.carousel-caption p {
+    color: #ffffff !important; /* White with strong shadow */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 500;
+}

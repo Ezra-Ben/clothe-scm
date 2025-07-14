@@ -66,7 +66,7 @@
                     <img src="{{ asset('products/linen.jpg') }}" class="d-block w-100" style="object-fit: cover; height: 160px;" alt="Linen">
                     <div class="carousel-caption d-none d-md-block">
                         <h5>Pure Linen</h5>
-                        <p>Breathable and comfortable linen for summer wear</p>
+                        <p>Breathable and comfortable linen for office wear</p>
                     </div>
                 </div>
             </div>
