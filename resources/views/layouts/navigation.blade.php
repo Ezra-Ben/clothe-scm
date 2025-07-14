@@ -35,18 +35,18 @@
                 <li class="nav-item">
                     @if(auth()->user()->customer)
                         <a href="{{ route('home') }}"
-                           class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
-                           {{ __('Dashboard') }}
+                           class="nav-link fw-semibold dashboard-link">
+                           <i class="bi bi-speedometer2 me-1"></i>{{ __('Dashboard') }}
                         </a>
                     @elseif(auth()->user()->can('supplier'))
                         <a href="{{ route('supplier.dashboard') }}"
-                           class="nav-link {{ request()->routeIs('supplier.dashboard') ? 'active' : '' }}">
-                           {{ __('Dashboard') }}
+                           class="nav-link fw-semibold dashboard-link">
+                           <i class="bi bi-speedometer2 me-1"></i>{{ __('Dashboard') }}
                         </a>
                     @else
                         <a href="{{ route('dashboard') }}"
-                           class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                           {{ __('Dashboard') }}
+                           class="nav-link fw-semibold dashboard-link">
+                           <i class="bi bi-speedometer2 me-1"></i>{{ __('Dashboard') }}
                         </a>
                     @endif               
                 </li>

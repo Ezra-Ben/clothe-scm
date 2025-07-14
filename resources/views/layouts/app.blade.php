@@ -23,6 +23,9 @@
     
     <!-- Custom Background Styles -->
     <link rel="stylesheet" href="{{ asset('css/background-styles.css') }}">
+    
+    <!-- Dashboard Styles -->
+    <link rel="stylesheet" href="{{ asset('css/dashboard-styles.css') }}">
 
     @stack('styles')
 </head>

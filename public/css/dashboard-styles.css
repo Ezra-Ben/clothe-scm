@@ -1,0 +1,12 @@
+/* Dashboard Link Styles */
+.dashboard-link {
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    color: #0d6efd !important; /* Always blue */
+}
+
+.dashboard-link:hover {
+    text-decoration: underline !important;
+    color: black !important; /* Change color on hover */
+    opacity: 0.8 !important; /* Slight fade on hover */
+}
