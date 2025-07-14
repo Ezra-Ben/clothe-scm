@@ -57,7 +57,7 @@
 
             {{-- If you want to link to add stock manually --}}
             <div class="mt-3">
-                <a href="{{ route('home') }}" class="btn btn-primary">
+                <a href="{{ route('inventory.create') }}" class="btn btn-primary">
                     Add New Stock
                 </a>
             </div>
