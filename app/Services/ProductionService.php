@@ -124,24 +124,25 @@ class ProductionService
                 $this->inventoryService->consumeRawMaterials($needed);
                 $productionOrder->status = 'in_production';
                 $productionOrder->save();
+                
+                // Only complete production if it was successfully started
+                $this->completeProduction($productionOrder->id);
+
+                if ($productionOrder->order_id) {
+                    OrderFulfillment::updateOrCreate(
+                        ['order_id' => $productionOrder->order_id],
+                        [
+                            'status' => 'in_production',
+                            'payment_date' => now(),
+                            'updated_by' => auth()->id() ?? 0,
+                            'updated_by_role' => auth()->user()->role->name ?? 'system',
+                        ]
+                    );
+
+                    dispatch(new \App\Jobs\MarkProductionCompleted($productionOrder->order_id))->delay(now()->addMinutes(2));
+                    dispatch(new \App\Jobs\MarkReadyForShipping($productionOrder->order_id))->delay(now()->addMinutes(4));
+                }
             }
-
-            $this->completeProduction($productionOrder->id);
-
-            if ($productionOrder->order_id) {
-                OrderFulfillment::updateOrCreate(
-                    ['order_id' => $productionOrder->order_id],
-                    [
-                        'status' => 'in_production',
-                        'payment_date' => now(),
-                        'updated_by' => auth()->id() ?? 0,
-                        'updated_by_role' => auth()->user()->role->name ?? 'system',
-                    ]
-            );
-
-            dispatch(new \App\Jobs\MarkProductionCompleted($productionOrder->order_id))->delay(now()->addMinutes(2));
-            dispatch(new \App\Jobs\MarkReadyForShipping($productionOrder->order_id))->delay(now()->addMinutes(4));
-        }
         }
     }
 
