@@ -35,7 +35,8 @@ class NewProcurementReplyNotification extends Notification implements ShouldQueu
             ->line('Expected Delivery: ' . $this->reply->expected_delivery_date)
             ->line('Status: ' . ucfirst($this->reply->status))
             ->action('Review Reply', url(route('procurement.replies.show', $this->reply->id)))
-            ->line('Please review and take appropriate action.');
+            ->line('Please review and take appropriate action.')
+            ->salutation('Regards, ' . config('app.name'));
     }
 
     public function toArray($notifiable)
