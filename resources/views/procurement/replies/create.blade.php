@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>CprocurementReate Reply for Request #{{ $procurementRequest->id }}</h1>
+    <h1>Create Procurement Reply for Request #{{ $procurementRequest->id }}</h1>
     
     <div class="card mbprocurementR3">
         <div class="card-body">
