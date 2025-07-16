@@ -15,39 +15,25 @@ class ChatController extends Controller
     // List all conversations for the authenticated user
     public function index()
     {
-        $user = Auth::user();
+     $user = Auth::user();
     $conversations = Conversation::where('user_one_id', $user->id)
         ->orWhere('user_two_id', $user->id)
         ->with(['userOne', 'userTwo'])
         ->get();
 
     // Filter users based on allowed chat connections
-    $users = collect();
-    if ($user->role->name === 'customer') {
-        // Customer can chat with carrier and inventory manager
-        $users = User::where('id', '!=', $user->id)
-            ->whereHas('role', function($q) {
+    $users = User::where('id', '!=', $user->id)
+        ->whereHas('role', function($q) use ($user) {
+            if ($user->role->name === 'customer') {
                 $q->whereIn('name', ['carrier', 'inventory_manager']);
-            })->get();
-    } elseif ($user->role->name === 'inventory_manager') {
-        // Inventory manager can chat with customer and supplier
-        $users = User::where('id', '!=', $user->id)
-            ->whereHas('role', function($q) {
+            } elseif ($user->role->name === 'inventory_manager') {
                 $q->whereIn('name', ['customer', 'supplier']);
-            })->get();
             } elseif ($user->role->name === 'carrier') {
-        // Carrier can chat with customer
-        $users = User::where('id', '!=', $user->id)
-            ->whereHas('role', function($q) {
                 $q->where('name', 'customer');
-            })->get();
-    } elseif ($user->role->name === 'supplier') {
-        // Supplier can chat with inventory manager
-        $users = User::where('id', '!=', $user->id)
-            ->whereHas('role', function($q) {
+            } elseif ($user->role->name === 'supplier') {
                 $q->where('name', 'inventory_manager');
-            })->get();
-    }
+            }
+        })->get();
 
     return view('chat.index', compact('conversations', 'users'));
     }
@@ -97,7 +83,10 @@ class ChatController extends Controller
             'message' => $request->message,
         ]);
 
-         event(new MessageSent($message));
+        event(new MessageSent($message));
+        $receiverId = ($conversation->user_one_id == $user->id) ? $conversation->user_two_id : $conversation->user_one_id;
+$receiver = \App\Models\User::find($receiverId);
+$receiver->notify(new \App\Notifications\NewChatMessage($message->message, $user));
 
         return response()->json($message);
     }
@@ -126,6 +115,9 @@ class ChatController extends Controller
             ]);
         }
 
+        if ($request->ajax() || $request->wantsJson()) {
+        return response()->json(['conversation_id' => $conversation->id]);
+        }
         return redirect()->route('chat.show', $conversation->id);
     }
 }

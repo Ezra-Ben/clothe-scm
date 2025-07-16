@@ -1,6 +1,36 @@
 @extends('layouts.app')
 
 @section('content')
+{{-- Message Notifications --}}
+@if(auth()->user()->unreadNotifications->count())
+    <div class="position-relative mb-4">
+        <button class="btn btn-outline-primary position-relative" type="button" data-bs-toggle="collapse" data-bs-target="#messageNotifications" aria-expanded="false" aria-controls="messageNotifications">
+            <i class="bi bi-chat-dots"></i>
+            New Messages
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ auth()->user()->unreadNotifications->count() }}
+            </span>
+        </button>
+        <div class="collapse mt-2" id="messageNotifications">
+            <div class="card card-body">
+                @foreach(auth()->user()->unreadNotifications as $notification)
+                    <div class="alert alert-info alert-dismissible fade show mb-2" role="alert">
+                        <strong>
+                            <i class="bi bi-person-circle"></i>
+                            {{ $notification->data['sender'] }}:
+                        </strong>
+                        {{ $notification->data['message'] }}
+                        <form method="POST" action="{{ route('notifications.markAsRead', $notification->id) }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-success ms-2">Mark as read</button>
+                        </form>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+@endif
     <div class="container mt-4">
         <h2 class="mb-4 text-primary">Inventory Dashboard</h2>
         <a href="{{ route('products.create') }}" class="btn btn-primary">Add New Product</a>
@@ -79,10 +109,11 @@
     type="button"
     data-bs-toggle="modal"
     data-bs-target="#chatUserModal"
-    style="position:fixed; bottom:30px; right:30px; z-index:9999; background:#0d6efd; color:white; border:none; border-radius:50%; width:60px; height:60px; font-size:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+    style="position:fixed; inset-block-end:30px; inset-inline-end:30px; z-index:9999; background:#0d6efd; color:white; border:none; border-radius:50%; inline-size:60px; block-size:60px; font-size:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
     💬
 </button>
 @if(isset($users))
     @include('components.chat-user-modal', ['users' => $users])
+     @include('components.chat-widget', ['conversationId' => null])
 @endif
 @endsection

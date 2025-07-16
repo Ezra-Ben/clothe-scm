@@ -24,7 +24,9 @@ class SupplierController extends Controller
             ? Supplier::with(['vendor', 'addedBy', 'contracts.addedBy', 'performances.createdBy'])->findOrFail($id)
             : auth()->user()->vendor->supplier()->with(['vendor', 'addedBy', 'contracts.addedBy', 'performances.createdBy'])->first();
     $users = app(\App\Http\Controllers\Chat\ChatController::class)->index()->getData()['users'];
-    return view('supplier.dashboard', compact('supplier','users'));
+    $unread = auth()->user()->unreadNotifications->count();
+    $notifications = auth()->user()->notifications;
+    return view('supplier.dashboard', compact('supplier','users','unread', 'notifications'));
     }
 
     public function update(Request $request)

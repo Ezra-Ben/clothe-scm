@@ -98,5 +98,14 @@ Route::middleware(['auth'])->group(function () {
         return '/';
     })->name('dashboard');
 });
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::routes(['middleware' => ['auth']]);
+
+Route::post('/notifications/{id}/read', function($id) {
+    $notification = auth()->user()->notifications()->findOrFail($id);
+    $notification->markAsRead();
+    return back();
+})->name('notifications.markAsRead');
 
 require __DIR__.'/auth.php';

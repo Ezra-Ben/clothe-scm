@@ -9,16 +9,15 @@
       <div class="modal-body">
         <ul class="list-group">
           @foreach($users as $user)
-            @if($user->id !== auth()->id())
               <li class="list-group-item d-flex justify-content-between align-items-center">
-                {{ $user->name }}
-                <form method="POST" action="{{ route('chat.start') }}">
-                  @csrf
-                  <input type="hidden" name="user_id" value="{{ $user->id }}">
-                  <button type="submit" class="btn btn-sm btn-primary">Start Chat</button>
-                </form>
+              <span>{{ $user->name }} <small class="text-muted">({{ $user->role->label ?? $user->role->name }})</small></span>
+                <button type="button"
+                    class="btn btn-sm btn-primary start-chat-btn"
+                    data-user-id="{{ $user->id }}">
+                      Start Chat
+                </button>
               </li>
-            @endif
+            
           @endforeach
         </ul>
       </div>

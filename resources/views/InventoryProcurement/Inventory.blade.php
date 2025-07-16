@@ -75,5 +75,6 @@
     </div>
 @if(isset($users))
     @include('components.chat-user-modal', ['users' => $users])
+    @include('components.chat-widget', ['conversationId' => null])
 @endif
 @endsection

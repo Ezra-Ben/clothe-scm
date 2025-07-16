@@ -175,7 +175,8 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         
-        App\Providers\RouteServiceProvider::class, // <-- THIS IS THE KEY LINE
+        App\Providers\RouteServiceProvider::class, 
+        // <-- THIS IS THE KEY LINE
     ],
 
 ];

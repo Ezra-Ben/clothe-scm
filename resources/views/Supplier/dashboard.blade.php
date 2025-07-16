@@ -1,34 +1,34 @@
 @extends('layouts.app')
 @section('content')
-<div class="dropdown float-end me-4">
-    <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-bell"></i>
-         @if($unread)
-            <span class="badge bg-danger">{{ $unread }}</span>
-        @endif
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="min-inline-size: 350px;">
-        @forelse($notifications as $notification)
-            <li class="dropdown-item">
-                {{ $notification->data['message'] ?? 'Notification' }}
-                <div class="mt-2">
-                    @if(isset($notification->data['actions']))
-                        @if(isset($notification->data['actions']['accept_url']))
-                            <a href="{{ $notification->data['actions']['accept_url'] }}" class="btn btn-success btn-sm">Accept</a>
-                        @endif
-                        @if(isset($notification->data['actions']['cancel_url']))
-                            <a href="{{ $notification->data['actions']['cancel_url'] }}" class="btn btn-danger btn-sm">Cancel</a>
-                        @endif
-                    @endif
-                </div>
-                <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
-            </li>
-        @empty
-            <li class="dropdown-item text-muted">No notifications</li>
-        @endforelse
-    </ul>
+@if(auth()->user()->unreadNotifications->count())
+    <div class="position-relative mb-4">
+        <button class="btn btn-outline-primary position-relative" type="button" data-bs-toggle="collapse" data-bs-target="#messageNotifications" aria-expanded="false" aria-controls="messageNotifications">
+            <i class="bi bi-chat-dots"></i>
+            New Messages
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ auth()->user()->unreadNotifications->count() }}
+            </span>
+        </button>
+        <div class="collapse mt-2" id="messageNotifications">
+            <div class="card card-body">
+                @foreach(auth()->user()->unreadNotifications as $notification)
+                    <div class="alert alert-info alert-dismissible fade show mb-2" role="alert">
+                        <strong>
+                            <i class="bi bi-person-circle"></i>
+                            {{ $notification->data['sender'] }}:
+                        </strong>
+                        {{ $notification->data['message'] }}
+                        <form method="POST" action="{{ route('notifications.markAsRead', $notification->id) }}" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-success ms-2">Mark as read</button>
+                        </form>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </div>
-
+@endif
 <div class="container">
     <h2>Supplier Dashboard</h2>
     <div class="row">
@@ -164,10 +164,11 @@
     type="button"
     data-bs-toggle="modal"
     data-bs-target="#chatUserModal"
-    style="position:fixed; bottom:30px; right:30px; z-index:9999; background:#0d6efd; color:white; border:none; border-radius:50%; width:60px; height:60px; font-size:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+    style="position:fixed; inset-block-end:30px; inset-inline-end:30px; z-index:9999; background:#0d6efd; color:white; border:none; border-radius:50%; inline-size:60px; block-size:60px; font-size:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
     💬
 </button>
 @if(isset($users))
     @include('components.chat-user-modal', ['users' => $users])
 @endif
+@include('components.chat-widget')
 @endsection
