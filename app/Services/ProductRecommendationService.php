@@ -1,29 +1,35 @@
 <?php
-/*
+
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 class ProductRecommendationService
 {
-    public function getRecommendedProductIds($customerId)
+    protected $segmentMap;
+
+    public function __construct()
     {
-        // 1. Fetch customer behavior from DB
-        $customer = \DB::table('customers')->where('id', $customerId)->first();
+        $this->segmentMap = json_decode(file_get_contents(storage_path('app/segment_to_products.json')), true);
+    }
 
-        $payload = [
-            'total_spent' => $customer->total_spent,
-            'order_frequency' => $customer->order_frequency,
-            'avg_order' => $customer->avg_order,
-            'product_variety' => $customer->product_variety,
-            // I can add more here or change
-        ];
+    public function getRecommendedProducts($customerId)
+    {
+        $segment = DB::table('customer_segments')
+            ->where('customer_id', $customerId)
+            ->orderByDesc('generated_at')
+            ->first();
 
-        // 2. Send POST to FastAPI
-        $response = Http::post('http://localhost:8000/recommend', $payload);
+        if (!$segment) {
+            return collect(); // Empty fallback
+        }
 
-        // 3. Return product IDs (array)
-        return $response->json()['recommended_product_ids'] ?? [];
+        $segmentId = $segment->segment_id;
+
+        $productIds = $this->segmentMap[$segmentId] ?? [];
+
+        return DB::table('products')
+            ->whereIn('id', $productIds)
+            ->get();
     }
 }
-*/

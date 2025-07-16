@@ -108,6 +108,65 @@
         </div>
     @endif
     <div class="container">
+
+    {{-- Recommended Products Section --}}
+    @if(auth()->check() && count($recommended) > 0)
+    <div class="container mb-5">
+    <h3 class="mb-4">
+        <i class="bi bi-stars text-warning me-1"></i> Recommended for You
+    </h3>
+
+    <div class="overflow-auto pb-2">
+        <div class="d-flex flex-nowrap gap-4">
+            @foreach ($recommended as $product)
+                <div class="card shadow-sm position-relative h-100 recommended-card">
+                    {{-- Badge --}}
+                    <span class="badge bg-primary position-absolute top-0 start-0 m-2">
+                        Recommended
+                    </span>
+
+                    {{-- Product image --}}
+                    <a href="{{ route('products.show', $product->id) }}">
+                        <img src="{{ asset('storage/products/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover; object-position: center;">
+                    </a>
+
+                    {{-- Card Body --}}
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title mb-1">{{ $product->name }}</h6>
+
+                        <div class="mb-auto">
+                            @if($product->discount_percent)
+                                <p class="card-text mb-1">
+                                    <span class="fw-bold d-block">
+                                        UGX {{ number_format($product->price * (1 - $product->discount_percent / 100), 0) }}
+                                    </span>
+                                    <span class="text-muted text-decoration-line-through d-block">
+                                        UGX {{ number_format($product->price, 0) }}
+                                    </span>
+                                </p>
+                            @else
+                                <p class="card-text mb-1 fw-bold">
+                                    UGX {{ number_format($product->price, 0) }}
+                                </p>
+                            @endif
+                        </div>
+
+                        <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-outline-primary w-100 mt-auto">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+
+{{-- Thin separator line - only show when carousel is visible --}}
+<hr class="my-0" style="border-top: 2px solid #6c757d;">
+@endif
+
+        {{-- Main Grid--}}
         <div class="row g-4">
             @forelse ($products as $product)
                 <div class="col-6 col-md-4 col-lg-3">

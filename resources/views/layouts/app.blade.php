@@ -30,6 +30,9 @@
     <!-- Carousel Caption Styles -->
     <link rel="stylesheet" href="{{ asset('css/carousel-captions.css') }}">
 
+    <!-- Recommeded Product Section-->
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
     @stack('styles')
 </head>
 <body>

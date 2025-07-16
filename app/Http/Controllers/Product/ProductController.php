@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\ProductRecommendationService;
 
 class ProductController extends Controller
 {
@@ -19,7 +20,16 @@ class ProductController extends Controller
 
         $products = $query->latest()->paginate(12);
 
-        return view('products.index', compact('products'));
+    
+        $recommended = [];
+
+        if (auth()->check() && auth()->user()->customer) {
+            $customerId = auth()->user()->customer->id; 
+            $recommendationService = new ProductRecommendationService();
+            $recommended = $recommendationService->getRecommendedProducts($customerId);
+        }
+
+        return view('products.index', ['products' => $products, 'recommended' => $recommended]);
     }
 
     public function show(Product $product)
