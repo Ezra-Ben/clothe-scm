@@ -10,7 +10,10 @@
 
     @forelse ($cartItems as $item)
         @php
-            $subtotal = $item->product->price * $item->quantity;
+            $price = $item->product->discount_percent
+                ? $item->product->price * (1 - $item->product->discount_percent / 100)
+                : $item->product->price;
+            $subtotal = $price * $item->quantity;
             $grandTotal += $subtotal;
         @endphp
 

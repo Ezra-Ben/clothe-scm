@@ -1,6 +1,6 @@
     .recommended-card {
-        min-width: 220px;
-        max-width: 220px;
+        min-width: 300px;
+        max-width: 300px;
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     }
 
@@ -26,3 +26,8 @@
         background: #e9ecef;
     }
 
+    .recommended-bg {
+    background: #d9f3fa; 
+    border-radius: 8px;
+    padding: 1.5rem;
+    }

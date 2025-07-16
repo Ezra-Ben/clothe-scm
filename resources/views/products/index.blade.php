@@ -111,7 +111,7 @@
 
     {{-- Recommended Products Section --}}
     @if(auth()->check() && count($recommended) > 0)
-    <div class="container mb-5">
+    <div class="container mb-5 recommended-bg">
     <h3 class="mb-4">
         <i class="bi bi-stars text-warning me-1"></i> Recommended for You
     </h3>
@@ -147,6 +147,7 @@
                             @else
                                 <p class="card-text mb-1 fw-bold">
                                     UGX {{ number_format($product->price, 0) }}
+                                    <span class="d-block" style="height: 1.5rem;">&nbsp;</span>
                                 </p>
                             @endif
                         </div>
@@ -160,13 +161,11 @@
         </div>
     </div>
 </div>
-
-
-{{-- Thin separator line - only show when carousel is visible --}}
-<hr class="my-0" style="border-top: 2px solid #6c757d;">
 @endif
-
         {{-- Main Grid--}}
+        <h3 class="mb-4">
+            <i class="bi bi-grid text-primary me-1"></i> Explore All Products
+        </h3>
         <div class="row g-4">
             @forelse ($products as $product)
                 <div class="col-6 col-md-4 col-lg-3">
