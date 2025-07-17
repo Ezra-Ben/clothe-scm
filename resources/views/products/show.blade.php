@@ -7,7 +7,7 @@
         <p><span class="font-semibold text-blue-700">Name:</span> {{ $product->name }}</p>
         <p><span class="font-semibold text-blue-700">Description:</span> {{ $product->description }}</p>
         <p><span class="font-semibold text-blue-700">SKU:</span> {{ $product->sku }}</p>
-        <p><span class="font-semibold text-blue-700">Price:</span> ${{ number_format($product->price, 2) }}</p>
+        <p><span class="font-semibold text-blue-700">Price:</span> {{ number_format($product->price, 2) }} UGX</p>
         <p><span class="font-semibold text-blue-700">Stock:</span> {{ $product->stock }}</p>
     </div>
     <div class="flex justify-between">

@@ -16,6 +16,11 @@ class ProductionBatch extends Model
         'notes',
     ];
 
+    protected $casts = [
+        'started_at' => 'datetime',
+        'completed_at' => 'datetime',
+    ];
+
     public function qualityControls()
     {
         return $this->hasMany(QualityControl::class);

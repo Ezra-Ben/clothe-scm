@@ -149,7 +149,7 @@
                                     @endif
                                 </td>
                                 <td><code>{{ $product->sku }}</code></td>
-                                <td><span class="badge bg-success">${{ number_format($product->price, 2) }}</span></td>
+                                <td><span class="badge bg-success">{{ number_format($product->price, 2) }} UGX</span></td>
                                 <td>
                                     <span class="badge {{ $product->stock > 10 ? 'bg-success' : ($product->stock > 0 ? 'bg-warning' : 'bg-danger') }}">
                                         {{ $product->stock }}

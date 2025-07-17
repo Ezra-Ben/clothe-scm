@@ -6,6 +6,10 @@ use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Supplier\SupplierController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductionBatchController;
+use App\Http\Controllers\QualityControlController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -46,5 +50,19 @@ Route::middleware(['auth'])->group(function () {
         Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('vendor.register');
 
 });
+
+Route::resource('products', ProductController::class);
+Route::resource('production-batches', ProductionBatchController::class);
+Route::resource('quality-controls', QualityControlController::class);
+
+// Reports and Analytics
+Route::prefix('reports')->name('reports.')->group(function () {
+    Route::get('/', [ReportController::class, 'index'])->name('index');
+    Route::get('/product-performance', [ReportController::class, 'productPerformance'])->name('product-performance');
+    Route::get('/quality-report', [ReportController::class, 'qualityReport'])->name('quality-report');
+    Route::get('/production-efficiency', [ReportController::class, 'productionEfficiency'])->name('production-efficiency');
+    Route::get('/export', [ReportController::class, 'export'])->name('export');
+});
+
 require __DIR__.'/auth.php';
 

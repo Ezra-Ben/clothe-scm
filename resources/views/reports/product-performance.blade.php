@@ -116,7 +116,7 @@
                                         {{ $product->stock }}
                                     </span>
                                 </td>
-                                <td><span class="badge bg-primary">${{ number_format($product->price, 2) }}</span></td>
+                                <td><span class="badge bg-primary">{{ number_format($product->price, 2) }} UGX</span></td>
                                 <td>
                                     <span class="badge bg-info">{{ $product->production_batches_count }}</span>
                                 </td>
@@ -219,7 +219,7 @@
                         </div>
                         <div class="col-6">
                             <div class="text-center">
-                                <h5 class="text-warning mb-1">${{ $products->avg('price') ? round($products->avg('price'), 2) : 0 }}</h5>
+                                <h5 class="text-warning mb-1">{{ $products->avg('price') ? round($products->avg('price'), 2) : 0 }} UGX</h5>
                                 <small class="text-muted">Avg Price</small>
                             </div>
                         </div>

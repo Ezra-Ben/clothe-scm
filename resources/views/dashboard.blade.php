@@ -102,7 +102,7 @@
                                         <strong>{{ $product->name }}</strong>
                                         <br><small class="text-muted">SKU: {{ $product->sku }}</small>
                                     </div>
-                                    <span class="badge bg-primary">${{ number_format($product->price, 2) }}</span>
+                                    <span class="badge bg-primary">{{ number_format($product->price, 2) }} UGX</span>
                                 </div>
                             @endforeach
                         </div>
@@ -179,9 +179,7 @@
                 <div class="card-body">
                     <div class="d-flex gap-3">
                         @if(!auth()->user()->vendor || !auth()->user()->vendor->supplier)
-                            <a href="{{ route('vendor.register') }}" class="btn btn-info">
-                                <i class="fas fa-user-plus me-2"></i>Apply as Vendor
-                            </a>
+                            <!-- Removed 'Apply as Vendor' button as requested -->
                         @endif
                         <a href="{{ route('products.index') }}" class="btn btn-outline-primary">
                             <i class="fas fa-box me-2"></i>Browse Products
