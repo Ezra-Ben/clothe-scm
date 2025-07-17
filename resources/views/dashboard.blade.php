@@ -60,7 +60,7 @@
     @can('manage-procurement')
         <a href="{{ route('procurement.requests.index') }}" class="btn btn-primary">Manage Procurement</a>
     @endcan
-    
+        <a href="{{ route('logistics.dashboard') }}" class="btn btn-primary">Logistics Dashboard</a>
     @if (!auth()->user()->role)
         <a href="{{ route('vendor.register') }}" class="btn btn-primary">Apply as Vendor</a>
         <a href="{{ route('orders.index') }}" class="btn btn-primary">My Orders</a>

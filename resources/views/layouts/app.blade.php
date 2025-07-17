@@ -59,6 +59,7 @@
     <script src="{{ asset('js/auto-dismiss.js') }}"></script>
     <script src="{{ asset('js/hide-ship.js') }}"></script>
     <script src="{{ asset('js/notifications.js') }}"></script>
+    <script src="{{ asset('js/logistics.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

@@ -2,14 +2,17 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Models\Order;
+use App\Models\OrderFulfillment;
 use App\Services\InventoryService;
 use App\Services\ProductionService;
 use App\Services\ProcurementService;
-use App\Models\OrderFulfillment;
+use App\Services\OutboundShipmentService;
 
 class OrderProcessingService
 {
+    protected $outbound;
     protected $inventory;
     protected $production;
     protected $procurement;
@@ -17,11 +20,13 @@ class OrderProcessingService
     public function __construct(
         InventoryService $inventory,
         ProductionService $production,
-        ProcurementService $procurement
+        ProcurementService $procurement,
+        OutboundShipmentService $outbound
     ) {
         $this->inventory = $inventory;
         $this->production = $production;
         $this->procurement = $procurement;
+        $this->outbound = $outbound;
     }
 
     public function processPaidOrder(Order $order)
@@ -76,6 +81,18 @@ class OrderProcessingService
         dispatch(new \App\Jobs\MarkReadyForShipping($order->id))->delay(now()->addMinutes(4));
     }
 
+    if ($fulfillmentStatus === 'ready_for_shipping') {
+        $shipment = $this->outbound->createForOrder($order);
+
+        $logisticsManager = User::all()->first(function ($user) {
+            return $user->hasRole('logistics_manager');
+        });
+
+        if ($logisticsManager) {
+            $logisticsManager->notify(new \App\Notifications\OutboundShipmentCreatedNotification($shipment));  
+        }
+
+    }
 
 }
 

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Procurement;
 
-use App\Models\ProcurementRequest;
+use App\Models\User;
 use App\Models\Supplier;
 use App\Models\RawMaterial;
 use Illuminate\Http\Request;
+use App\Models\ProcurementRequest;
 use App\Http\Controllers\Controller;
+use App\Services\InboundShipmentService;
 use App\Notifications\NewProcurementRequestNotification;
+use App\Notifications\InboundShipmentCreatedNotification;
 
 class ProcurementRequestController extends Controller
 {
@@ -16,6 +19,14 @@ class ProcurementRequestController extends Controller
      * - Admin sees all.
      * - Supplier sees only their assigned requests.
      */
+
+    protected $inboundShipment;
+
+    public function __construct(InboundShipmentService $inboundShipment)
+    {
+        $this->inboundShipment = $inboundShipment;
+    }
+
     public function index()
     {
         if (auth()->user()->can('supplier')) {
@@ -130,7 +141,14 @@ class ProcurementRequestController extends Controller
     {
         $procurementRequest->update(['status' => 'accepted']);
 
-        return redirect()->route('procurement.requests.show', $procurementRequest->id)->with('success', 'Procurement request accepted successfully.');
+        $shipment = $this->inboundShipment->createForProcurementRequest($procurementRequest);
+
+        $logisticsManager = User::all()->first(fn($user) => $user->hasRole('logistics_manager'));
+        if ($logisticsManager && $shipment) {
+            $logisticsManager->notify(new InboundShipmentCreatedNotification($shipment));
+        }
+
+        return redirect()->route('procurement.requests.show', $procurementRequest->id)->with('success', 'Procurement request accepted successfully and Inbound shipment scheduled..');
     }
 
     /**

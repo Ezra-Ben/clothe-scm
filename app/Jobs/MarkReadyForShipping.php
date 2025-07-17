@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Jobs;
-
-use App\Models\OrderFulfillment;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
+use App\Models\OrderFulfillment;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -33,6 +33,17 @@ class MarkReadyForShipping implements ShouldQueue
         if ($fulfillment && $fulfillment->status === 'production_completed') {
             $fulfillment->status = 'ready_for_shipping';
             $fulfillment->save();
+
+            $order = $fulfillment->order; 
+            $outboundShipment = app(\App\Services\OutboundShipmentService::class)->createForOrder($order);
+
+            $logisticsManager = User::all()->first(function ($user) {
+                return $user->hasRole('logistics_manager');
+            });
+    
+            if ($logisticsManager) {
+                $logisticsManager->notify(new \App\Notifications\OutboundShipmentCreatedNotification($outboundShipment));  
+            }
         }
     }
 }
