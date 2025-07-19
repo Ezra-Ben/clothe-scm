@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Logistics;
 
 use App\Models\Pod;
+use App\Models\User;
 use App\Models\InboundShipment;
 use App\Models\OutboundShipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Notifications\PodSubmittedNotification;
 
 class PodController extends Controller
 {
@@ -26,34 +28,23 @@ class PodController extends Controller
 
     public function create(Request $request)
     {
-        // Get the carrier linked to the currently logged-in user
-        $carrier = $request->user()->carrier;
+        $shipmentId = $request->get('shipment');
+        $shipmentType = $request->get('type'); 
 
-        if (!$carrier) {
-            abort(403, 'No carrier profile linked to your user account.');
+        if ($shipmentType === 'App\Models\InboundShipment') {
+            $shipment = \App\Models\InboundShipment::findOrFail($shipmentId);
+        } else {
+            $shipment = \App\Models\OutboundShipment::findOrFail($shipmentId);
         }
 
-        // Get inbound shipments assigned to this carrier that are not yet delivered
-        $inboundShipments = $carrier->inboundShipments()
-            ->whereIn('status', ['pending', 'in_transit'])
-            ->get();
-
-        // Get outbound shipments assigned to this carrier that are not yet delivered
-        $outboundShipments = $carrier->outboundShipments()
-            ->whereIn('status', ['pending', 'in_transit'])
-            ->get();
-
-        // Combine both collections
-        $shipments = $inboundShipments->concat($outboundShipments);
-
-        return view('logistics.pods.create', compact('shipments'));
+        return view('logistics.pods.create', compact('shipment', 'shipmentType'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'shipment_id' => 'required|integer',
-            'shipment_type' => 'required|string|in:inbound_shipment,outbound_shipment',
+            'shipment_type' => 'required|in:App\Models\InboundShipment,App\Models\OutboundShipment',
             'delivered_by' => 'required|string|max:255',
             'received_by' => 'required|string|max:255',
             'received_at' => 'nullable|date',
@@ -82,7 +73,7 @@ class PodController extends Controller
             ]);
 
             if ($request->has('confirm_delivery')) {
-                $shipmentClass = $request->shipment_type === 'inbound_shipment' ? InboundShipment::class : OutboundShipment::class;
+                $shipmentClass = $request->shipment_type;
                 $shipment = $shipmentClass::findOrFail($request->shipment_id);
 
                 $shipment->update([
@@ -100,24 +91,34 @@ class PodController extends Controller
                 $carrier = $shipment->carrier;  
 
             if ($carrier) {
-                $oldAvg = $carrier->rating ?? 0;
-                $oldCount = $carrier->rating_count ?? 0;
+                $oldRating = $carrier->customer_rating ?? 0;
                 $newRating = $request->rating;
 
-                $newAvg = (($oldAvg * $oldCount) + $newRating) / ($oldCount + 1);
-
-                $carrier->update([
-                    'rating' => round($newAvg, 2),
-                    'rating_count' => $oldCount + 1,
-                ]);
-            }
-        
-
+                // If there is no previous rating, just use the new one
+            if ($oldRating == 0) {
+                $avgRating = $newRating;
+            } else {
+                $avgRating = round((($oldRating + $newRating) / 2), 2);
             }
 
+            $carrier->update([
+                'customer_rating' => $avgRating,
+                'status' => 'free',
+            ]);
+            }
+            
+            $logisticsManager = User::all()->first(function ($user) {
+            return $user->hasRole('admin');
+            });
+
+            if ($logisticsManager) {
+                $logisticsManager->notify(new PodSubmittedNotification($pod));  
+            }
+
+        }
             DB::commit();
 
-            return redirect()->route('logistics.pods.index')->with('success', 'Proof of Delivery submitted successfully.');
+            return redirect()->route('carrier.dashboard')->with('success', 'Proof of Delivery submitted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to submit PoD: ' . $e->getMessage()]);

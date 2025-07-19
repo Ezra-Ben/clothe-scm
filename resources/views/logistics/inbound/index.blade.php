@@ -55,7 +55,7 @@
                     @foreach($shipments as $shipment)
                     <tr>
                         <td>{{ $shipment->id }}</td>
-                        <td>{{ $shipment->supplier->name ?? '-' }}</td>
+                        <td>{{ $shipment->supplier->vendor->name ?? '-' }}</td>
                         <td>
                             <span class="badge bg-{{ 
                                 $shipment->status == 'delivered' ? 'success' : 
@@ -66,7 +66,7 @@
                         </td>
                         <td>{{ optional($shipment->estimated_delivery_date)->format('d M Y') }}</td>
                         <td>
-                            <a href="{{ route('logistics.orders.inbound.show', $shipment->id) }}" class="btn btn-outline-info btn-sm">Open</a>
+                            <a href="{{ route('inbound.show', $shipment->id) }}" class="btn btn-outline-info btn-sm">Open</a>
                         </td>
                     </tr>
                     @endforeach

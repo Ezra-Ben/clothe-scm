@@ -85,7 +85,7 @@ class OrderProcessingService
         $shipment = $this->outbound->createForOrder($order);
 
         $logisticsManager = User::all()->first(function ($user) {
-            return $user->hasRole('logistics_manager');
+            return $user->hasRole('admin');
         });
 
         if ($logisticsManager) {

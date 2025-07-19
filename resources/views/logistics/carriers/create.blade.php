@@ -6,6 +6,15 @@
     <form method="POST" action="{{ route('carriers.store') }}">
         @csrf
         <div class="mb-3">
+            <label>Carrier Name</label>
+            <select name="user_id" class="form-select" required>
+                <option value="">Select Carrier User</option>
+                @foreach($carrierUsers as $user)
+                    <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
             <label>Contact Phone</label>
             <input type="text" name="contact_phone" class="form-control">
         </div>

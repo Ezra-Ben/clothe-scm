@@ -7,7 +7,10 @@
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5>{{ $carrier->user->name ?? 'N/A' }}</h5>
-            <a href="{{ route('logistics.carriers.index') }}" class="btn btn-sm btn-secondary">Back to List</a>
+            <div>
+                <a href="{{ route('carriers.edit', $carrier->id) }}" class="btn btn-sm btn-primary me-2">Edit</a>
+                <a href="{{ route('carriers.index') }}" class="btn btn-sm btn-secondary">Back to List</a>
+            </div>
         </div>
         <div class="card-body">
             <div class="row mb-3">

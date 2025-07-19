@@ -14,27 +14,38 @@ class LogisticsController extends Controller
 {
     public function index()
     {
-        $readyCount = OutboundShipment::where('status', 'ready')->count();
-        $inTransitCount = OutboundShipment::where('status', 'in_transit')->count();
-        $deliveredCount = OutboundShipment::where('status', 'delivered')->count();
+        $readyCount = OutboundShipment::where('status', 'pending')->count() + InboundShipment::where('status', 'pending')->count();
+        $inTransitCount = OutboundShipment::where('status', 'in_transit')->count() + InboundShipment::where('status', 'in_transit')->count();
+        $deliveredCount = OutboundShipment::where('status', 'delivered')->count() + InboundShipment::where('status', 'delivered')->count();
         $totalCarriers = Carrier::count();
 
-        // Example: Carrier batches (customize as needed)
-        $carrierBatches = Carrier::withCount(['shipments as batch_count' => function($q) {
-            $q->where('status', '!=', 'delivered');
-        }])->with(['shipments' => function($q) {
+        // Carrier batches: combine outbound and inbound shipments
+        $carrierBatches = Carrier::with(['outboundShipments' => function($q) {
             $q->select('carrier_id', 'destination', 'status');
+        }, 'inboundShipments' => function($q) {
+            $q->select('carrier_id', 'status'); // inbound does not have destination
         }])->get()->map(function($carrier) {
+            $outboundInTransit = $carrier->outboundShipments->where('status', 'in_transit')->first();
+            $outbound = $carrier->outboundShipments->where('status', '=', 'in_transit');
+            $inbound = $carrier->inboundShipments->where('status', '=', 'in_transit');
+            $allShipments = $outbound->concat($inbound);
             return (object) [
                 'carrier' => $carrier,
-                'destination' => optional($carrier->shipments->first())->destination,
-                'status' => optional($carrier->shipments->first())->status,
-                'batch_count' => $carrier->batch_count,
+                'destination' => $outboundInTransit ? $outboundInTransit->destination : '',
+                'status' => optional($allShipments->first())->status,
+                'batch_count' => $allShipments->count(),
             ];
         });
 
-        // Recent deliveries
-        $recentShipments = OutboundShipment::with(['order.customer', 'carrier'])
+        // Recent outbound deliveries
+        $recentOutboundShipments = OutboundShipment::with(['order.customer', 'carrier'])
+            ->where('status', 'delivered')
+            ->orderByDesc('actual_delivery_date')
+            ->take(10)
+            ->get();
+
+        // Recent inbound deliveries
+        $recentInboundShipments = InboundShipment::with(['procurementRequest', 'supplier', 'carrier'])
             ->where('status', 'delivered')
             ->orderByDesc('actual_delivery_date')
             ->take(10)
@@ -46,7 +57,8 @@ class LogisticsController extends Controller
             'deliveredCount' => $deliveredCount,
             'totalCarriers' => $totalCarriers,
             'carrierBatches' => $carrierBatches,
-            'recentShipments' => $recentShipments,
+            'recentOutboundShipments' => $recentOutboundShipments,
+            'recentInboundShipments' => $recentInboundShipments,
         ]);
     }
 }

@@ -40,6 +40,11 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('home');
         }
 
+        
+        if ($user->hasRole('carrier')) {
+            return redirect()->route('carrier.dashboard');
+        }
+        
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

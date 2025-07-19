@@ -9,7 +9,7 @@
             <div class="card border-primary shadow text-center">
                 <div class="card-body">
                     <i class="bi bi-truck display-4 text-primary"></i>
-                    <h4>{{ $orders->filter(fn($order) => $order->fulfillment && $order->fulfillment->status === 'ready_for_shipping')->count() }}</h4>
+                    <h4>{{ $shipments->where('status', 'pending')->count() }}</h4>
                     <p class="card-text">Orders Ready for Shipping</p>
                 </div>
             </div>
@@ -19,7 +19,7 @@
             <div class="card border-warning shadow text-center">
                 <div class="card-body">
                     <i class="bi bi-arrow-repeat display-4 text-warning"></i>
-                    <h4>{{ $orders->filter(fn($order) => $order->fulfillment && $order->fulfillment->status === 'in_transit')->count() }}</h4>
+                    <h4>{{ $shipments->where('status', 'in_transit')->count() }}</h4>
                     <p class="card-text">Orders In Transit</p>
                 </div>
             </div>
@@ -29,7 +29,7 @@
             <div class="card border-success shadow text-center">
                 <div class="card-body">
                     <i class="bi bi-check-circle display-4 text-success"></i>
-                    <h4>{{ $orders->filter(fn($order) => $order->fulfillment && $order->fulfillment->status === 'delivered')->count() }}</h4>
+                    <h4>{{ $shipments->where('status', 'delivered')->count() }}</h4>
                     <p class="card-text">Delivered Orders</p>
                 </div>
             </div>
@@ -49,21 +49,21 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($orders as $order)
+            @foreach($shipments as $shipment)
             <tr>
-                <td>{{ $order->id }}</td>
-                <td>{{ $order->customer->name }}</td>
+                <td>{{ $shipment->order->id ?? '-' }}</td>
+                <td>{{ $shipment->order->customer->user->name ?? '-' }}</td>
                 <td>
                     <span class="badge bg-{{ 
-                        $order->fulfillment && $order->fulfillment->status === 'ready_for_shipping' ? 'primary' :
-                        ($order->fulfillment && $order->fulfillment->status === 'in_transit' ? 'warning' : 'success')
+                        $shipment->status === 'pending' ? 'primary' :
+                        ($shipment->status === 'in_transit' ? 'warning' : 'success')
                     }}">
-                        {{ ucfirst(str_replace('_', ' ', $order->fulfillment->status ?? 'unknown')) }}
+                        {{ ucfirst(str_replace('_', ' ', $shipment->status ?? 'unknown')) }}
                     </span>
                 </td>
-                <td>{{ $order->shipping_address }}</td>
+                <td>{{ $shipment->destination ?? '-' }}</td>
                 <td>
-                    <a href="{{ route('logistics.orders.outbound.show', $order->id) }}" class="btn btn-sm btn-outline-info">
+                    <a href="{{ route('outbound.show', $shipment->id) }}" class="btn btn-sm btn-outline-info">
                         Open
                     </a>
                 </td>

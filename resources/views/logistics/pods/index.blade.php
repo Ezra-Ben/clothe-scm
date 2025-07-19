@@ -26,13 +26,21 @@
                     @foreach($pods as $pod)
                     <tr>
                         <td>{{ $pod->id }}</td>
-                        <td>{{ ucfirst($pod->shipment_type) }}</td>
+                        <td>
+                            @if($pod->shipment_type === 'App\Models\InboundShipment')
+                                Inbound
+                            @elseif($pod->shipment_type === 'App\Models\OutboundShipment')
+                                Outbound
+                            @else
+                                Unknown
+                            @endif
+                        </td>
                         <td>{{ $pod->delivered_by }}</td>
                         <td>{{ $pod->received_by }}</td>
                         <td>{{ optional($pod->received_at)->format('d M Y H:i') }}</td>
                         <td>{{ $pod->condition ?? 'N/A' }}</td>
                         <td>
-                            <a href="{{ route('logistics.pods.show', $pod->id) }}" class="btn btn-sm btn-outline-info">
+                            <a href="{{ route('pods.show', $pod->id) }}" class="btn btn-sm btn-outline-info">
                                 View
                             </a>
                         </td>

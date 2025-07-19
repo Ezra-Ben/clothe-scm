@@ -5,6 +5,7 @@ use App\Http\Controllers\Procurement\ProcurementReplyController;
 use App\Http\Controllers\Production\ProductionOrderController;
 use App\Http\Controllers\Logistics\OutboundShipmentController;
 use App\Http\Controllers\Logistics\InboundShipmentController;
+use App\Http\Controllers\Logistics\LogisticsController;
 use App\Http\Controllers\Logistics\CarrierController;
 use App\Http\Controllers\Logistics\PodController;
 use App\Http\Controllers\Logistics\DashboardController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Admin\AdminSupplierController;
 use App\Http\Controllers\Supplier\PerformanceController;
 use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Supplier\SupplierController;
+use App\Http\Controllers\Carrier\DashboardController as CarrierDashboardController;
 use App\Http\Controllers\Inventory\InventoryController;
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Product\ProductController;
@@ -21,8 +23,12 @@ use App\Http\Controllers\Order\PaymentController;
 use App\Http\Controllers\Order\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RoleSelectionController;
 
 // Public routes (no login required)
+
+Route::get('/select-role', [RoleSelectionController::class, 'show'])->name('select.role');
+Route::post('/select-role', [RoleSelectionController::class, 'store'])->name('select.role.store');
 Route::view('/welcome', 'welcome')->name('welcome');
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
@@ -140,14 +146,14 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('logistics/inbound', InboundShipmentController::class);
         Route::resource('logistics/outbound', OutboundShipmentController::class);
         Route::get('/logistics/dashboard', [LogisticsController::class, 'index'])->name('logistics.dashboard');
-        Route::post('logistics/outbound/{order}/assign-carrier/{carrier}', [OutboundShipmentController::class, 'assignCarrier'])->name('logistics.outbound.assignCarrier');
+        Route::post('logistics/outbound/{shipment}/assign-carrier/{carrier}', [OutboundShipmentController::class, 'assignCarrier'])->name('logistics.outbound.assignCarrier');
         Route::post('logistics/inbound/{inboundShipment}/assign-carrier/{carrier}', [InboundShipmentController::class, 'assignCarrier'])->name('logistics.inbound.assignCarrier');
         Route::patch('logistics/inbound/{shipment}/update-status', [InboundShipmentController::class, 'updateStatus'])->name('logistics.inbound.updateStatus');
         Route::patch('logistics/outbound/{shipment}/update-status', [OutboundShipmentController::class, 'updateStatus'])->name('logistics.outbound.updateStatus');
 
-
+        Route::get('logistics/outbound/{shipment}/filter-carriers', [OutboundShipmentController::class, 'filterCarriers'])->name('logistics.outbound.filterCarriers');
    
-    Route::get('carrier/dashboard', [DashboardController::class, 'index'])->name('carrier.dashboard');
+    Route::get('carrier/dashboard', [CarrierDashboardController::class, 'index'])->name('carrier.dashboard');
+});
 
 require __DIR__.'/auth.php';
-});

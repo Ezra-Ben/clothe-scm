@@ -17,6 +17,7 @@ class OutboundShipment extends Model
         'customer_id',
         'carrier_id',
         'tracking_number',
+        'destination',
         'status',
         'estimated_delivery_date',
         'actual_delivery_date',

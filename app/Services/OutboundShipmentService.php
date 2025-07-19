@@ -14,6 +14,7 @@ class OutboundShipmentService
             [
             'customer_id' => $order->customer_id,
             'status' => 'pending',
+            'destination' => $order->customer->shipping_address,
             'tracking_number' => 'OB-' . now()->timestamp,
             'estimated_delivery_date' => now()->addDays(3),
             ]

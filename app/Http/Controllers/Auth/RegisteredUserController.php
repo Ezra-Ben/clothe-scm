@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,16 +36,33 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // Get the role from session and fetch its ID from the roles table
+        $roleName = session('selected_role');
+        $roleId = $roleName ? Role::where('name', $roleName)->value('id') : null;
+
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role_id' => $roleId,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Custom redirect logic after registration
+        if ($user->hasRole('customer')) {
+            return redirect()->route('home');
+        }
+        if ($user->hasRole('supplier')) {
+            return redirect()->route('vendor.form'); 
+        }
+        if ($user->hasRole('carrier')) {
+            return redirect()->route('welcome');
+        }
+
+        return redirect()->route('welcome', ['absolute' => false]);
     }
 }

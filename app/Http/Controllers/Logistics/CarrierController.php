@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Logistics;
 
+use App\Models\User;
+use App\Models\Role;
 use App\Models\Carrier;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,9 +23,13 @@ class CarrierController extends Controller
     }
 
     public function create()
-{
-    return view('logistics.carriers.create');
-}
+    {
+        $carrierRoleId = Role::where('name', 'carrier')->value('id');
+        $carrierUsers = User::where('role_id', $carrierRoleId)
+            ->whereDoesntHave('carrier')
+            ->get();
+        return view('logistics.carriers.create', compact('carrierUsers'));
+    }
 
 public function store(Request $request)
 {
@@ -33,11 +39,19 @@ public function store(Request $request)
         'contact_phone' => 'nullable|string|max:255',
         'vehicle_type' => 'required|string|max:255',
         'license_plate' => 'nullable|string|max:255',
-        'service_areas' => 'required|string|max:255',
         'max_weight_kg' => 'nullable|integer|min:0',
         'customer_rating' => 'nullable|numeric|min:0|max:10',
     ]);
 
+    
+    // Convert comma-separated service_areas to JSON array
+    $validated['service_areas'] = json_encode(array_map('trim', explode(',', $request->service_areas)));
+
+    // Set default rating to zero if not provided
+    if (!isset($validated['customer_rating'])) {
+        $validated['customer_rating'] = 0;
+    }
+    
     Carrier::create($validated);
     return redirect()->route('carriers.index')->with('success', 'Carrier created!');
 }
@@ -54,10 +68,12 @@ public function update(Request $request, Carrier $carrier)
         'contact_phone' => 'nullable|string|max:255',
         'vehicle_type' => 'required|string|max:255',
         'license_plate' => 'nullable|string|max:255',
-        'service_areas' => 'required|string|max:255',
         'max_weight_kg' => 'nullable|integer|min:0',
         'customer_rating' => 'nullable|numeric|min:0|max:10',
     ]);
+
+    // Convert comma-separated service_areas to JSON array
+    $validated['service_areas'] = json_encode(array_map('trim', explode(',', $request->service_areas)));
 
     $carrier->update($validated);
     return redirect()->route('carriers.index')->with('success', 'Carrier updated!');

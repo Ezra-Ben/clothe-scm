@@ -2,8 +2,18 @@
 
 @section('content')
 <div class="container">
-    <h3 class="mb-4">Carriers Overview</h3>
+    <h3 class="mb-4 d-flex justify-content-between align-items-center">
+        Carriers Overview
+        <a href="{{ route('carriers.create') }}" class="btn btn-success btn-sm">Create New Carrier</a>
+    </h3>
 
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    
     <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
         @php
             $freeCount = $carriers->where('status', 'free')->count();
@@ -69,7 +79,7 @@
                         </td>
                         <td>{{ $carrier->max_weight_kg }}</td>
                         <td>
-                            <a href="{{ route('logistics.carriers.show', $carrier->id) }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('carriers.show', $carrier->id) }}" class="btn btn-sm btn-outline-primary">
                                 View
                             </a>
                         </td>

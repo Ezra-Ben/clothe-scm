@@ -10,47 +10,27 @@
         <div class="modal-body">
           <div class="row mb-3">
             <div class="col-md-4">
-              <input type="text" name="service_area" class="form-control" placeholder="Service Area" value="{{ request('service_area') }}">
+              <input type="text" id="service_area" name="service_area" class="form-control" placeholder="Service Area">
             </div>
             <div class="col-md-4">
-              <input type="text" name="vehicle_type" class="form-control" placeholder="Vehicle Type" value="{{ request('vehicle_type') }}">
+              <input type="text" id="vehicle_type" name="vehicle_type" class="form-control" placeholder="Vehicle Type">
             </div>
             <div class="col-md-4">
-              <input type="number" name="required_quantity" class="form-control" placeholder="Required Quantity (optional)" value="{{ request('required_quantity') }}">
+              <input type="number" id="required_quantity" name="required_quantity" class="form-control" placeholder="Required Quantity (optional)">
             </div>
           </div>
 
-          @if(isset($carriers) && count($carriers))
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Carrier</th>
-                <th>Vehicle Type</th>
-                <th>Service Area</th>
-                <th>Status</th>
-                <th>Assign</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($carriers as $carrier)
-              <tr>
-                <td>{{ $carrier->name }}</td>
-                <td>{{ $carrier->vehicle_type }}</td>
-                <td>{{ $carrier->service_areas }}</td>
-                <td><span class="badge bg-success">{{ ucfirst($carrier->status) }}</span></td>
-                <td>
-                  <form method="POST" action="{{ $assignCarrierPostRoute($carrier) }}">
-                    @csrf
-                    <button type="submit" class="btn btn-primary btn-sm">Assign</button>
-                  </form>
-                </td>
-              </tr>
-              @endforeach
-            </tbody>
-          </table>
-          @else
-            <p class="text-muted">No carriers matched your filters.</p>
-          @endif
+          <div id="carrier-table-wrapper">
+            @include('logistics.partials.carrier_table', [
+                'carriers' => $carriers,
+                'assignCarrierPostRoute' => $assignCarrierPostRoute
+            ])
+          </div>
+
+          <script>
+            window.carrierFilterShipmentId = {{ $shipment->id }};
+          </script>
+          <script src="{{ asset('js/carrier-filter.js') }}"></script>
         </div>
       </form>
     </div>

@@ -3,7 +3,21 @@
 @section('content')
 <div class="container">
     <h1 class="mb-4">Carrier Dashboard</h1>
-
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
     {{-- Notification Section --}}
     <div class="mb-4">
         <h4>Notifications</h4>
@@ -17,7 +31,7 @@
                         <span>
                             {{ $notification->data['message'] ?? 'New update available.' }}
                             <small class="text-muted ms-2">{{ $notification->created_at->diffForHumans() }}</small>
-                        </span>
+                        </span>                        
                         <button class="btn btn-sm btn-link text-decoration-none" onclick="markAsRead('{{ $notification->id }}', this)">Mark as Read</button>
                     </li>
                 @endforeach
@@ -64,7 +78,7 @@
             @forelse($toDoInbound as $shipment)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     {{ $shipment->tracking_number ?? 'No Tracking' }} — {{ ucfirst($shipment->status) }}
-                    <a href="{{ route('logistics.inbound-shipments.show', $shipment->id) }}" class="btn btn-sm btn-primary">View</a>
+                    <a href="{{ route('inbound.show', $shipment->id) }}" class="btn btn-sm btn-primary">View</a>
                 </li>
             @empty
                 <li class="list-group-item">No inbound shipments to do.</li>
@@ -78,7 +92,7 @@
             @forelse($completedInbound as $shipment)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     {{ $shipment->tracking_number ?? 'No Tracking' }} — {{ ucfirst($shipment->status) }}
-                    <a href="{{ route('logistics.inbound-shipments.show', $shipment->id) }}" class="btn btn-sm btn-secondary">View</a>
+                    <a href="{{ route('inbound.show', $shipment->id) }}" class="btn btn-sm btn-secondary">View</a>
                 </li>
             @empty
                 <li class="list-group-item">No completed inbound shipments.</li>
@@ -92,8 +106,8 @@
         <ul class="list-group">
             @forelse($toDoOutbound as $shipment)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Order: {{ $shipment->order->order_number ?? 'N/A' }} — {{ ucfirst($shipment->status) }}
-                    <a href="{{ route('logistics.outbound-shipments.show', $shipment->id) }}" class="btn btn-sm btn-primary">View</a>
+                    {{ $shipment->tracking_number ?? 'N/A' }} — {{ ucfirst($shipment->status) }}
+                    <a href="{{ route('outbound.show', $shipment->id) }}" class="btn btn-sm btn-primary">View</a>
                 </li>
             @empty
                 <li class="list-group-item">No outbound shipments to do.</li>
@@ -106,8 +120,8 @@
         <ul class="list-group">
             @forelse($completedOutbound as $shipment)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Order: {{ $shipment->order->order_number ?? 'N/A' }} — {{ ucfirst($shipment->status) }}
-                    <a href="{{ route('logistics.outbound-shipments.show', $shipment->id) }}" class="btn btn-sm btn-secondary">View</a>
+                    {{ $shipment->tracking_number ?? 'N/A' }} — {{ ucfirst($shipment->status) }}
+                    <a href="{{ route('outbound.show', $shipment->id) }}" class="btn btn-sm btn-secondary">View</a>
                 </li>
             @empty
                 <li class="list-group-item">No completed outbound shipments.</li>

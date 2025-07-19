@@ -33,8 +33,8 @@ class CarrierAssignedShipmentNotification extends Notification
             'type' => $this->type,
             'message' => 'You have been assigned a new ' . $this->type . ' shipment.',
             'url' => $this->type === 'outbound'
-                ? route('logistics.outbound.show', $this->shipment->order_id)
-                : route('logistics.inbound.show', $this->shipment->id),
+                ? route('outbound.show', $this->shipment->order_id)
+                : route('inbound.show', $this->shipment->id),
         ];
     }
 }

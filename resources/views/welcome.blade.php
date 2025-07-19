@@ -28,8 +28,8 @@
 
             @guest
                 <div class="d-flex justify-content-center gap-3">
-                    <a href="{{ route('register') }}" class="btn btn-primary btn-lg">Register</a>
-                    <a href="{{ route('login') }}" class="btn btn-secondary btn-lg">Login</a>
+                    <a href="{{ route('select.role') }}" class="btn btn-primary btn-lg">Register</a>
+                    <!--<a href="{{ route('login') }}" class="btn btn-secondary btn-lg">Login</a>-->
                 </div>
             @endguest
         </div>

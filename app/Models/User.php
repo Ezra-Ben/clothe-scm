@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use App\Models\Carrier;
 
 class User extends Authenticatable
 {
@@ -86,5 +87,10 @@ class User extends Authenticatable
     return $this->hasOne(Customer::class);
     }
 
+    
+    public function carrier()
+    {
+        return $this->hasOne(Carrier::class);
+    }
 
 }

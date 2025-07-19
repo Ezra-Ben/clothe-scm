@@ -12,18 +12,18 @@ class DashboardController extends Controller
     {
         $carrier = Auth::user()->carrier;
 
-        $toDoInbound = $carrier->inboundShipments()->where('status', '!=', 'delivered')->with('supplier')->get();
-        $completedInbound = $carrier->inboundShipments()->where('status', 'delivered')->with('supplier')->get();
+        $toDoInbound = $carrier->inboundShipments()->where('status', '!=', 'delivered')->with('procurementRequest')->get();
+        $completedInbound = $carrier->inboundShipments()->where('status', 'delivered')->with('procurementRequest')->get();
 
         $toDoOutbound = $carrier->outboundShipments()->where('status', '!=', 'delivered')->with('order')->get();
         $completedOutbound = $carrier->outboundShipments()->where('status', 'delivered')->with('order')->get();
 
-        $unreadNotifications = Auth::user()->unreadNotifications;
+        $notifications = Auth::user()->unreadNotifications;
 
         return view('carrier.dashboard', compact(
             'toDoInbound', 'completedInbound',
             'toDoOutbound', 'completedOutbound',
-            'unreadNotifications'
+            'notifications'
         ));
     }
 }
