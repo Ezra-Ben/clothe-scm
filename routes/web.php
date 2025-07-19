@@ -14,6 +14,12 @@ use App\Http\Controllers\Supplier\PerformanceController;
 use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Supplier\SupplierController;
+use App\Http\Controllers\WorkforceController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\EmployeeDashboardController;
+use Illuminate\Support\Facades\Gate;
+
 
 Route::view('/', 'welcome');
 
@@ -78,11 +84,9 @@ Route::middleware(['can:admin'])->get('/distributionandlogistics/admin', [Distri
 Route::middleware(['auth'])->prefix('distributionandlogistics/carriers')->name('distributionandlogistics.carriers.')->group(function () {
     // Routes accessible to all authenticated users
     Route::get('/create', [CarrierController::class, 'create'])
-        ->middleware('can:user|admin|carrier')
         ->name('create');
     
     Route::post('/', [CarrierController::class, 'store'])
-        ->middleware('can:user|admin|carrier')
         ->name('store');
     
     Route::get('/{carrier}', [CarrierController::class, 'show'])
@@ -162,6 +166,49 @@ Route::middleware(['auth'])->prefix('inbound')->name('inbound.')->group(function
     });
 });
 
+Route::get('/check-access', function () {
+    $user = auth()->user();
+    return [
+        'logged_in' => $user ? true : false,
+        'user_role' => $user ? $user->role?->name : null,
+        'can_user' => Gate::allows('user'),
+        'can_admin' => Gate::allows('admin'),
+        'can_carrier' => Gate::allows('carrier'),
+         'can_employee' => Gate::allows('employee'),
+    ];
+})->middleware('auth');
 
-// Auth routes
+Route::middleware(['can:create-tasks'])->group(function () {
+    // Manager
+    Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
+    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+});
+
+Route::middleware(['can:allocate-tasks'])->group(function(){
+    // Workforce Allocator
+    Route::get('/workforce', [WorkforceController::class, 'dashboard'])->name('workforce.dashboard');
+    Route::get('/workforce/tasks/{task}/assign', [WorkforceController::class, 'assignView'])->name('workforce.assign.view');
+    Route::post('/workforce/tasks/assign', [WorkforceController::class, 'assign'])->name('workforce.assign');
+    Route::get('/employees/{employee}', [WorkforceController::class, 'showEmployee'])->name('employees.show');});
+
+// Employee Dashboard
+Route::middleware(['can:employee'])->group(function(){
+    Route::get('/employee/dashboard', [EmployeeDashboardController::class, 'index'])->name('employee.dashboard');
+    Route::get('/employee/tasks/{task}', [EmployeeDashboardController::class, 'show'])->name('employee.task.show');
+    Route::patch('/employee/allocations/{allocation}/status', [EmployeeDashboardController::class, 'updateStatus'])->name('employee.task.update');
+});
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+});
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+});
+
 require __DIR__.'/auth.php';

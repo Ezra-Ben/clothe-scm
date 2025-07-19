@@ -22,7 +22,8 @@ class RoleSeeder extends Seeder
         ['name' => 'customer_manager', 'label' => 'Customer Manager'],
         ['name' => 'product_manager', 'label' => 'Product Manager'],
         ['name' => 'carrier', 'label' => 'Carrier'],
-        ['name' => 'user' , 'label'  => 'User'],
+        ['name' => 'manager', 'label' => 'Manager'],
+        ['name' => 'employee', 'label' => 'Employee'],
     ];
 
     foreach ($roles as $role) {

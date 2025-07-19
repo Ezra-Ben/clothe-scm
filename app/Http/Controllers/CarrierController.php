@@ -6,6 +6,7 @@ use App\Models\Carrier;
 use App\Services\CarrierService;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateCarrierRequest;
+use  App\Http\Requests\StoreCarrierRequest;
 
 class CarrierController extends Controller
 {
@@ -38,7 +39,7 @@ class CarrierController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(StoreCarrierRequest $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -67,12 +68,16 @@ class CarrierController extends Controller
 
         Carrier::create($validated);
 
+        $user = auth()->user();
+    $user->role = 'carrier'; 
+    $user->save();
+
         return redirect()->route('distributionandlogistics.carriers.dashboard')
             ->with('success', "Carrier {$validated['name']} created successfully");
     }
 
 
-    public function adminStore(Request $request)
+    public function adminStore(StoreCarrierRequest $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',

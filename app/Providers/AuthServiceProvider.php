@@ -23,16 +23,19 @@ class AuthServiceProvider extends ServiceProvider
             return $user->hasRole('supplier'); 
 	});
      
-    Gate::define('user', function(User $user) {
-        return  $user->role ->hasRole('user');});
+    Gate::define('create-tasks', function ($user) {
+        return $user->role_id === 8;
+    });
 
+    Gate::define('allocate-tasks', function ($user) {
+        return $user->role_id === 1;
+    });
 
-        Gate::define('admin', fn (User $user) => $user->role === 'admin');
+    Gate::define('employee', function ($user) {
+        return $user->role_id === 9;
+    });
 
-        // Gate for carrier
-        Gate::define('carrier', fn (User $user) => $user->role === 'carrier');
-
-        // Gate for standard user
-        Gate::define('user', fn (User $user) => $user->role === 'user');
+Gate::define('admin', fn(User $user) => $user->role && $user->role->name === 'admin');
+Gate::define('carrier', fn(User $user) => $user->role && $user->role->name === 'carrier');
     }
 }
