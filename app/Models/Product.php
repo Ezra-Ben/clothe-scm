@@ -1,27 +1,17 @@
 <?php
-
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 class Product extends Model
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'price',
-        'discount_percent',
-        'image',
-       
-    ];
-
-    public function inventory()
+    use HasFactory;
+    protected $fillable = ['name', 'sku', 'price', 'stock_quantity', 'description'];
+    public function orders()
     {
-        return $this->hasOne(Inventory::class);
+        return $this->hasMany(Order::class);
     }
-
-    public function bom() 
+    public function batches()
     {
-        return $this->hasOne(BOM::class);
+        return $this->hasMany(Batch::class);
     }
 }
