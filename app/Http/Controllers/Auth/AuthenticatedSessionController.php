@@ -28,14 +28,23 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
         
-	$user = $request->user();
+        $user = $request->user();
 
         // Custom redirect logic
         if ($user->vendor && $user->vendor->supplier) {
             return redirect()->route('supplier.dashboard');
         }
 
+        // Redirect customers to home page instead of dashboard
+        if ($user->customer) {
+            return redirect()->route('home');
+        }
 
+        
+        if ($user->hasRole('carrier')) {
+            return redirect()->route('carrier.dashboard');
+        }
+        
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

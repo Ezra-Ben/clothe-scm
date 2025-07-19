@@ -9,4 +9,5 @@ class Bom extends Model
     public function product() { return $this->belongsTo(Product::class); }
     public function bomItems() { return $this->hasMany(BomItem::class); }
     public function productionOrders() { return $this->hasMany(ProductionOrder::class); }
+
 }

@@ -1,4 +1,9 @@
 <x-guest-layout>
+    @if(session('selected_role'))
+    <div class="alert alert-info mb-3">
+        You are registering as: <strong>{{ ucfirst(session('selected_role')) }}</strong>
+    </div>
+    @endif
     <form method="POST" action="{{ route('register') }}">
         @csrf
 

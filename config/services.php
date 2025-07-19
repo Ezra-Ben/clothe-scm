@@ -24,6 +24,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+
+    'flutterwave' => [
+        'secret_key' => env('FLW_SECRET_KEY'),
+    ],
+
+
     'resend' => [
         'key' => env('RESEND_KEY'),
     ],

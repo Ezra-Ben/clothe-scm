@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Supplier extends Model
 {
+    use Notifiable;
+
     protected $fillable = [
        'vendor_id', 
        'address', 
@@ -31,4 +34,10 @@ class Supplier extends Model
     {
         return $this->belongsTo(User::class, 'added_by');
     }
+
+    public function replies()
+    {
+        return $this->hasMany(ProcurementReply::class);
+    }
+
 }

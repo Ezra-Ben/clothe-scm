@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use App\Models\Carrier;
 
 class User extends Authenticatable
 {
@@ -22,7 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-	'role_id',
+	    'role_id',
     ];
 
     /**
@@ -76,5 +77,20 @@ class User extends Authenticatable
     return $this->role && $this->role->name === $name;
     }
 
+    public function cartItems()
+    {
+    return $this->hasMany(CartItem::class);
+    }
+
+    public function customer()
+    {
+    return $this->hasOne(Customer::class);
+    }
+
+    
+    public function carrier()
+    {
+        return $this->hasOne(Carrier::class);
+    }
 
 }
