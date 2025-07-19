@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Inventory;
 
+use App\Models\RawMaterial;
 use App\Models\Inventory;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -10,10 +11,24 @@ use App\Http\Controllers\Controller;
 class InventoryController extends Controller
 {
     // List all inventory records
-    public function index()
+    public function index(Request $request)
     {
-        $inventories = Inventory::with('product')->get();
-        return view('inventory.index', compact('inventories'));
+        $productSearch = $request->input('product_search');
+        $rawSearch = $request->input('raw_search');
+
+        $inventories = Inventory::with('product')
+        ->when($productSearch, function ($query) use ($productSearch) {
+            $query->whereHas('product', function ($q) use ($productSearch) {
+                $q->where('name', 'like', '%' . $productSearch . '%');
+            });
+        })
+        ->get();
+
+        $rawMaterials = RawMaterial::when($rawSearch, function ($query) use ($rawSearch) {
+            $query->where('name', 'like', '%' . $rawSearch . '%')
+                  ->orWhere('sku', 'like', '%' . $rawSearch . '%');
+        })->get();
+        return view('inventory.index', compact('inventories', 'rawMaterials'));
     }
 
     // (Optional) Show form to edit stock manually

@@ -14,6 +14,7 @@ use App\Http\Controllers\Supplier\PerformanceController;
 use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Supplier\SupplierController;
 use App\Http\Controllers\Carrier\DashboardController as CarrierDashboardController;
+use App\Http\Controllers\Inventory\RawMaterialController;
 use App\Http\Controllers\Inventory\InventoryController;
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Product\ProductController;
@@ -67,6 +68,8 @@ Route::middleware(['auth'])->group(function () {
     //Inventory Routes
     Route::middleware(['can:manage-inventory'])->group(function () {
         Route::resource('inventory', InventoryController::class)->only(['index', 'create', 'store', 'edit', 'update']);
+        Route::resource('raw-materials', RawMaterialController::class);
+
     });
 
     //Procurement Routes - Accessible to both suppliers and procurement managers
