@@ -7,6 +7,8 @@
 
     <title>{{ config('app.name', 'J-Clothes') }}</title>
     
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <!-- Favicon - favicon files -->
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -56,9 +58,13 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Scripts -->
     <script src="{{ asset('js/auto-dismiss.js') }}"></script>
     <script src="{{ asset('js/hide-ship.js') }}"></script>
     <script src="{{ asset('js/notifications.js') }}"></script>
+    <script src="{{ asset('js/quality-control.js') }}"></script>
     <script src="{{ asset('js/logistics.js') }}"></script>
     @stack('scripts')
 </body>

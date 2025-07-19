@@ -18,4 +18,10 @@ class ProductionBatch extends Model
     {
         return $this->belongsTo(ProductionOrder::class);
     }
+
+    public function qualityControl()
+    {
+        return $this->hasOne(QualityControl::class);
+    }
+
 }

@@ -18,7 +18,7 @@
         ['color' => 'primary', 'icon' => 'bi-box-fill', 'label' => 'Finished Goods (In Stock)', 'value' => $inventories->sum('quantity_on_hand')],
         ['color' => 'info', 'icon' => 'bi-arrow-down-circle-fill', 'label' => 'Reserved (Finished)', 'value' => $inventories->sum('quantity_reserved')],
         ['color' => 'danger', 'icon' => 'bi-exclamation-circle-fill', 'label' => 'Materials Below Reorder', 'value' => $rawMaterials->filter(fn($m) => $m->quantity_on_hand <= $m->reorder_point)->count()],
-        ['color' => 'warning', 'icon' => 'bi-arrow-down', 'label' => 'Products To ReStock (<50)', 'value' => $inventories->filter(fn($i) => $i->quantity_on_hand < 50)->count()],
+        ['color' => 'warning', 'icon' => 'bi-arrow-down', 'label' => 'Products To Restock (<50)', 'value' => $inventories->filter(fn($i) => $i->quantity_on_hand < 50)->count()],
     ] as $card)
         <div class="col-md-6 col-xl-3">
             <div class="card text-center shadow-sm border-{{ $card['color'] }}">
@@ -54,7 +54,7 @@
                         <th>Product</th>
                         <th>Quantity On Hand</th>
                         <th>Reserved</th>
-                        <th>Reorder Status</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -68,7 +68,7 @@
                                 @if ($inventory->quantity_on_hand < 50)
                                     <span class="badge bg-warning text-dark">Low</span>
                                 @else
-                                    <span class="badge bg-success">OK</span>
+                                    <span class="badge bg-success">Good</span>
                                 @endif
                             </td>
                             <td>

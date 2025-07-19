@@ -24,6 +24,15 @@
     <button class="btn btn-success">Mark as Completed</button>
 </form>
 @endif
-
+@if(!$productionOrder->productionBatch)
+    <a href="{{ route('production_batches.create', ['production_order_id' => $productionOrder->id]) }}" class="btn btn-primary mb-3">
+        Create Production Batch
+    </a>
+@else
+    <p><strong>Batch Status:</strong> {{ ucfirst($productionOrder->productionBatch->status) }}</p>
+    <a href="{{ route('production_batches.edit', $productionOrder->productionBatch->id) }}" class="btn btn-warning mb-3">
+        Edit Batch
+    </a>
+@endif
 <a href="{{ route('production_orders.index') }}" class="btn btn-secondary">Back</a>
 @endsection

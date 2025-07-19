@@ -23,9 +23,9 @@ class ProductionOrder extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function productionBatches()
+    public function productionBatch()
     {
-    return $this->hasMany(ProductionBatch::class);
+    return $this->hasOne(ProductionBatch::class);
     }
 
 }

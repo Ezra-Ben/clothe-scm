@@ -3,6 +3,8 @@
 use App\Http\Controllers\Procurement\ProcurementRequestController;
 use App\Http\Controllers\Procurement\ProcurementReplyController;
 use App\Http\Controllers\Production\ProductionOrderController;
+use App\Http\Controllers\Production\ProductionBatchController;
+use App\Http\Controllers\Production\QualityControlController;
 use App\Http\Controllers\Logistics\OutboundShipmentController;
 use App\Http\Controllers\Logistics\InboundShipmentController;
 use App\Http\Controllers\Logistics\LogisticsController;
@@ -113,6 +115,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/production-orders', [ProductionOrderController::class, 'store'])->name('production_orders.store');
         Route::get('/production-orders/{id}', [ProductionOrderController::class, 'show'])->name('production_orders.show');
         Route::post('/production-orders/{id}/complete', [ProductionOrderController::class, 'complete'])->name('production_orders.complete');
+        Route::resource('production_batches', ProductionBatchController::class);
+        Route::resource('quality_control', QualityControlController::class);
+
     });
 
     // Supplier  Routes

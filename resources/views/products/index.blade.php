@@ -119,7 +119,7 @@
     <div class="overflow-auto pb-2">
         <div class="d-flex flex-nowrap gap-4">
             @foreach ($recommended as $product)
-                <div class="card shadow-sm position-relative h-100 recommended-card">
+                <div class="card product-card shadow-sm position-relative h-100 recommended-card">
                     {{-- Badge --}}
                     <span class="badge bg-primary position-absolute top-0 start-0 m-2">
                         Recommended
@@ -169,7 +169,7 @@
         <div class="row g-4">
             @forelse ($products as $product)
                 <div class="col-6 col-md-4 col-lg-3">
-                    <div class="card shadow-sm position-relative h-100">
+                    <div class="card product-card shadow-sm position-relative h-100">
                         {{-- Discount corner --}}
                         @if($product->discount_percent)
                             <span class="badge bg-danger position-absolute top-0 start-0 m-2">
