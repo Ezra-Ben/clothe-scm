@@ -1,24 +1,13 @@
 <?php
-
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 class Bom extends Model
 {
-    protected $fillable = [
-        'product_id',
-        'version',
-        'description',
-    ];
+    use HasFactory;
+    protected $fillable = ['product_id'];
+    public function product() { return $this->belongsTo(Product::class); }
+    public function bomItems() { return $this->hasMany(BomItem::class); }
+    public function productionOrders() { return $this->hasMany(ProductionOrder::class); }
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
-
-    public function items()
-    {
-        return $this->hasMany(BomItem::class);
-    }
 }

@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\Procurement\ProcurementRequestController;
 use App\Http\Controllers\Procurement\ProcurementReplyController;
 use App\Http\Controllers\Production\ProductionOrderController;
@@ -25,6 +24,13 @@ use App\Http\Controllers\Product\CartController;
 use App\Http\Controllers\Order\PaymentController;
 use App\Http\Controllers\Order\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BomController;
+use App\Http\Controllers\ProductionCoordinatorController;
+use App\Http\Controllers\Reports\ProductionReportController;
+use App\Http\Controllers\Resource\ResourceController;
+use App\Http\Controllers\Resource\CapacityController; 
+
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RoleSelectionController;
 
@@ -44,6 +50,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+});
+    
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
@@ -143,11 +152,38 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-    Route::get('vendor/register', [VendorController::class, 'showForm'])->name('vendor.form');
-    Route::post('vendor/register', [VendorController::class, 'submitForm'])->name('vendor.register');
+//ProductionController
+Route::middleware(['auth'])->prefix('production')->name('production.')->group(function () {
+    Route::get('/dashboard', [ProductionCoordinatorController::class, 'dashboard'])->name('dashboard');
 
+    Route::get('/orders', [ProductionCoordinatorController::class, 'orders'])->name('orders');
+    Route::get('/orders/{id}', [ProductionCoordinatorController::class, 'showOrder'])->name('orders.show');
 
-    // Logistics Routes
+    Route::get('/batches', [ProductionCoordinatorController::class, 'batches'])->name('batches');
+    Route::get('/batches/{id}', [ProductionCoordinatorController::class, 'showBatch'])->name('batches.show');
+
+    Route::get('/schedules', [ProductionCoordinatorController::class, 'schedules'])->name('schedules');
+    Route::post('/schedules', [ProductionCoordinatorController::class, 'storeSchedule'])->name('schedules.store');
+    Route::put('/schedules/{id}', [ProductionCoordinatorController::class, 'updateSchedule'])->name('schedules.update');
+    Route::delete('/schedules/{id}', [ProductionCoordinatorController::class, 'destroySchedule'])->name('schedules.destroy');
+});
+Route::resource('boms', BomController::class); 
+Route::get('/', function () {
+    return redirect()->route('production.dashboard');
+})->middleware('auth');
+Route::prefix('reports')->name('reports.')->group(function () {
+    Route::get('/', [ProductionReportController::class, 'index'])->name('index');
+    Route::get('/summary', [ProductionReportController::class, 'productionSummary'])->name('production_summary');
+    Route::get('/resource-utilization', [ProductionReportController::class, 'resourceUtilization'])->name('resource_utilization');
+
+});
+Route::resource('resources', ResourceController::class); // Standard CRUD for resources
+Route::get('capacity-planning', [CapacityController::class, 'index'])->name('capacity_planning.index');
+Route::post('capacity-planning/assign', [CapacityController::class, 'assignResource'])->name('capacity_planning.assign');
+
+Route::post('/production/batches/{batch}/activities', [ProductionCoordinatorController::class, 'storeActivity'])->name('production.batches.activities.store');
+Route::put('/production/batches/{batch}/status', [ProductionCoordinatorController::class, 'updateBatchStatus'])->name('production.batches.status.update');
+// Logistics Routes
    
         Route::resource('pods', PodController::class);
         Route::resource('carriers', CarrierController::class);
@@ -165,3 +201,4 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
