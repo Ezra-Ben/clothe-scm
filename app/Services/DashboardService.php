@@ -5,21 +5,25 @@ namespace App\Services;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Order;
-use Illuminate\Support\Facades\DB;
+use App\Models\Customer;
 use App\Models\Inventory;
-use App\Models\ProcurementRequest;
 use App\Models\InboundShipment;
+use App\Models\ProcurementRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class DashboardService
 {
     public function getMetrics()
     {
-        $activeCustomers = User::whereHas('orders', fn ($q) =>
+        $activeCustomers = User::whereHas('customer.orders', fn ($q) =>
             $q->where('created_at', '>=', Carbon::now()->subDays(60))
         )->get()->filter(fn($user) => $user->hasRole('customer'))->count();
 
-        $supplierCount = User::all()->filter(fn($u) => $u->hasRole('supplier'))->count();
+        $supplierCount = User::whereHas('role', function ($q) {
+            $q->where('name', 'supplier');
+        })->count();
+
 
         return [
             'active_customers' => $activeCustomers,
@@ -39,52 +43,85 @@ class DashboardService
         return json_decode($json, true)['1'] ?? [];
     }
 
-    public function getActualSalesPerMonth()
+    public function getActualSalesPerMonth(int $year)
     {
-        $before = DB::table('historical_sales')
-            ->selectRaw('MONTH(sale_date) as month, SUM(total_amount) as total')
-            ->whereYear('sale_date', 2025)->groupBy('month');
+        $historical = DB::table('historical_sales')
+            ->selectRaw('MONTH(date) as month, SUM(quantity) as total')
+            ->whereYear('date', $year)
+            ->groupBy('month');
 
-        $after = DB::table('order_items')
+        $recent = DB::table('order_items')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->selectRaw('MONTH(orders.order_date) as month, SUM(order_items.total_price) as total')
-            ->whereYear('orders.order_date', 2025)->groupBy('month');
+            ->selectRaw('MONTH(orders.created_at) as month, SUM(order_items.quantity) as total')
+            ->where('orders.status', 'paid')
+            ->whereYear('orders.created_at', $year)
+            ->groupBy('month');
+        
 
-        return $before->unionAll($after)->get();
+        return DB::table(function ($query) use ($historical, $recent) {
+            $query->fromSub($historical->unionAll($recent), 'monthly_sales');
+        })
+            ->selectRaw('month, SUM(total) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
     }
 
-    public function getForecastedSalesPerMonth()
+    public function getForecastedSalesPerMonth(int $year)
     {
         return DB::table('forecasts')
-            ->selectRaw('MONTH(forecast_month) as month, SUM(predicted_quantity * avg_price) as total')
-            ->whereYear('forecast_month', 2025)->groupBy('month')->get();
+            ->selectRaw('MONTH(forecasts.forecast_month) as month, SUM(forecasts.predicted_quantity) as total')
+            ->whereYear('forecasts.forecast_month', $year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
     }
 
-    public function getProductSalesPerMonth(array $productIds)
+    public function getProductSalesPerMonth(array $productIds, int $year)
     {
-        return DB::table('order_items')
-            ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->selectRaw('product_id, MONTH(orders.order_date) as month, SUM(quantity) as total')
+        $historical = DB::table('historical_sales')
+            ->selectRaw('product_id, MONTH(date) as month, SUM(quantity) as total')
+            ->whereYear('date', $year)
             ->whereIn('product_id', $productIds)
-            ->whereYear('orders.order_date', 2025)
-            ->groupBy('product_id', 'month')->get();
+            ->groupBy('product_id', 'month');
+
+        $recent = DB::table('order_items')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->selectRaw('order_items.product_id, MONTH(orders.created_at) as month, SUM(order_items.quantity) as total')
+            ->whereYear('orders.created_at', $year)
+            ->where('orders.status', 'paid')
+            ->whereIn('order_items.product_id', $productIds)
+            ->groupBy('order_items.product_id', 'month');
+
+        return DB::table(function ($query) use ($historical, $recent) {
+            $query->fromSub($historical->unionAll($recent), 'product_sales');
+        })
+        ->selectRaw('product_id, month, SUM(total) as total')
+        ->groupBy('product_id', 'month')
+        ->orderBy('product_id')
+        ->orderBy('month')
+        ->get();
     }
 
-    public function getProductForecasts(array $productIds)
+    public function getProductForecasts(array $productIds, int $year)
     {
         return DB::table('forecasts')
+            ->join('products', 'forecasts.product_id', '=', 'products.id')
             ->selectRaw('product_id, MONTH(forecast_month) as month, SUM(predicted_quantity) as total')
             ->whereIn('product_id', $productIds)
-            ->whereYear('forecast_month', 2025)
-            ->groupBy('product_id', 'month')->get();
+            ->whereYear('forecast_month', $year)
+            ->groupBy('product_id', 'month')
+            ->orderBy('product_id')
+            ->orderBy('month')
+            ->get();
     }
 
     public function getSegmentCounts()
     {
-        return DB::table('customer_segment')
-            ->select('cluster', DB::raw('COUNT(*) as count'))
-            ->groupBy('cluster')
-            ->pluck('count', 'cluster')
+        return DB::table('customer_segments')
+            ->select('segment_id', DB::raw('COUNT(*) as count'))
+            ->groupBy('segment_id')
+            ->pluck('count', 'segment_id')
             ->toArray();
     }
 
@@ -92,34 +129,50 @@ class DashboardService
     {
         $data = DB::table('production_orders')
             ->selectRaw('YEARWEEK(created_at, 1) as week, status, SUM(quantity) as total')
-            ->groupBy('week', 'status')->orderBy('week')->get();
+            ->groupBy('week', 'status')
+            ->orderBy('week')
+            ->get();
 
         $result = [];
         foreach ($data as $row) {
             $week = $row->week;
-            $result[$week] ??= ['completed' => 0, 'pending' => 0, 'failed' => 0];
-            $result[$week][$row->status] = $row->total;
-        }
+            $status = $row->status;
 
-        return $result;
+        $result[$week] ??= [];
+        $result[$week][$status] = (int) $row->total;
+    }
+
+    return $result;
     }
 
     public function getRecentSuppliers()
     {
         return InboundShipment::where('created_at', '>=', now()->subWeek())
-            ->with('procurementRequest.supplier.user')
+            ->with('procurementRequest.supplier.vendor')
+            ->where('status','delivered')
             ->get()
-            ->map(fn($s) => $s->procurementRequest->supplier->user->name ?? 'Unknown')
-            ->unique()->values();
+            ->map(function($shipment) {
+                return optional($shipment->procurementRequest?->supplier?->vendor)->name ?? 'Unknown';
+            })
+            ->filter(fn($name) => $name !== 'Unknown')
+            ->countBy()
+            ->sortDesc()
+            ->toArray();
     }
 
-    public function getApprovedProcurementsThisMonth()
+    public function getApprovedProcurementsThisWeek()
     {
-        return ProcurementRequest::where('status', 'accepted')
-            ->where('updated_at', '>=', now()->startOfMonth())
+        return ProcurementRequest::with('rawMaterial', 'supplier.vendor')
+            ->where('status', 'accepted')
+            ->where('updated_at', '>=', now()->subDays(7))
+            ->orderByDesc('updated_at')
             ->get()
-            ->map(fn($p) =>
-                "Procurement request #{$p->id} approved for {$p->quantity} units"
-            );
+            ->map(function ($p) {
+                $material = optional($p->rawMaterial)->name ?? 'Unknown Material';
+                $vendor = optional($p->supplier?->vendor)->name ?? 'Unknown Vendor';
+                $date = $p->updated_at->format('Y-m-d');
+
+                return "Procurement request #{$p->id} for {$p->quantity} units of {$material} from {$vendor} approved on {$date}";
+        });
     }
 }

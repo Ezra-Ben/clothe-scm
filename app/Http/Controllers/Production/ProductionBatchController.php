@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Production;
 
 use App\Models\ProductionBatch;
 use App\Models\ProductionOrder;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ProductionBatchController extends Controller
 {
@@ -22,7 +23,7 @@ class ProductionBatchController extends Controller
                 ->with('error', 'Batch already exists for this production order.');
         }
 
-        return view('production_orders.production_batches.create', compact('productionOrder'));
+        return view('production.production_batches.create', compact('productionOrder'));
     }
 
     /**
@@ -63,7 +64,7 @@ class ProductionBatchController extends Controller
         }
 
         $batch = $productionBatch;
-        return view('production_orders.production_batches.edit', compact('batch'));
+        return view('production.production_batches.edit', compact('batch'));
     }
 
     /**

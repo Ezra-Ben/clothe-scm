@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Production;
 
 use App\Models\QualityControl;
 use App\Models\ProductionBatch;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class QualityControlController extends Controller
 {

@@ -93,4 +93,25 @@ class User extends Authenticatable
         return $this->hasOne(Carrier::class);
     }
 
+    
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
+    }
+
+    public function conversationsAsUserOne()
+    {
+        return $this->hasMany(Conversation::class, 'user_one_id');
+    }
+
+    public function conversationsAsUserTwo()
+    {
+        return $this->hasMany(Conversation::class, 'user_two_id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
 }

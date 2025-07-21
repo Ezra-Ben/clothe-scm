@@ -6,8 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'J-Clothes') }}</title>
-    
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{--@vite('resources/js/app.js')--}}
 
     <!-- Favicon - favicon files -->
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
@@ -22,7 +22,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
+
     <!-- Custom Background Styles -->
     <link rel="stylesheet" href="{{ asset('css/background-styles.css') }}">
     
@@ -58,7 +58,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js -->
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom Scripts -->
     <script src="{{ asset('js/auto-dismiss.js') }}"></script>
@@ -66,6 +66,7 @@
     <script src="{{ asset('js/notifications.js') }}"></script>
     <script src="{{ asset('js/quality-control.js') }}"></script>
     <script src="{{ asset('js/logistics.js') }}"></script>
+    <script src="{{ asset('js/schedules.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('header')
-    <h2 class="h4 fw-semibold text-dark mb-0">
-        Inventory Dashboard
-    </h2>
+    <h2 class="fw-semibold text-center text-primary mb-1">Inventory Dashboard</h2>
 @endsection
 
 @section('content')
@@ -13,7 +11,8 @@
             {{ session('success') }}
         </div>
     @endif
-    {{-- Summary Cards --}}<div class="row mb-4 g-4">
+
+    <div class="row mb-4 g-4">
     @foreach([
         ['color' => 'primary', 'icon' => 'bi-box-fill', 'label' => 'Finished Goods (In Stock)', 'value' => $inventories->sum('quantity_on_hand')],
         ['color' => 'info', 'icon' => 'bi-arrow-down-circle-fill', 'label' => 'Reserved (Finished)', 'value' => $inventories->sum('quantity_reserved')],
@@ -32,6 +31,13 @@
     @endforeach
 </div>
 </div>
+
+    
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ route('production_orders.create') }}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-circle"></i> Request Production 
+        </a>    
+    </div>
 
     {{-- Finished Goods Table --}}
     <div class="card shadow-sm mb-4">

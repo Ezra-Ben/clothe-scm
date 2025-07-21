@@ -10,11 +10,15 @@ use App\Http\Controllers\Logistics\InboundShipmentController;
 use App\Http\Controllers\Logistics\LogisticsController;
 use App\Http\Controllers\Logistics\CarrierController;
 use App\Http\Controllers\Logistics\PodController;
-use App\Http\Controllers\Logistics\DashboardController;
 use App\Http\Controllers\Admin\AdminSupplierController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Supplier\PerformanceController;
 use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Supplier\SupplierController;
+use App\Http\Controllers\Employee\EmployeeController;
+use App\Http\Controllers\Employee\DashboardController;
+use App\Http\Controllers\Workforce\WorkforceController;
+use App\Http\Controllers\Workforce\TaskController;
 use App\Http\Controllers\Carrier\DashboardController as CarrierDashboardController;
 use App\Http\Controllers\Inventory\RawMaterialController;
 use App\Http\Controllers\Inventory\InventoryController;
@@ -30,11 +34,14 @@ use App\Http\Controllers\Auth\RoleSelectionController;
 
 // Public routes (no login required)
 
-Route::get('/select-role', [RoleSelectionController::class, 'show'])->name('select.role');
-Route::post('/select-role', [RoleSelectionController::class, 'store'])->name('select.role.store');
 Route::view('/welcome', 'welcome')->name('welcome');
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/select-role', [RoleSelectionController::class, 'show'])->name('select.role');
+Route::post('/select-role', [RoleSelectionController::class, 'store'])->name('select.role.store');
+Route::get('/employees/set-password', [EmployeeController::class, 'setPassword'])->name('employees.set_password');
+Route::post('/employees/finalize-registration', [EmployeeController::class, 'finalizeRegistration'])->name('employees.finalize_registration');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::view('profile', 'profile')->name('profile');
@@ -49,6 +56,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
     Route::patch('/cart/{cartItem}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/{cartItem}', [CartController::class, 'destroy'])->name('cart.destroy');
+
+    Route::middleware(['can:admin'])->group(function (){
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    });
 
     Route::middleware(['can:manage-products'])->group(function () {
         Route::get('admin/products', [ProductController::class, 'adminIndex'])->name('admin.products.index');
@@ -94,7 +105,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('procurement/replies/{replyId}', [ProcurementReplyController::class, 'show'])->name('procurement.replies.show');
     
     // Notification routes
-    Route::post('notifications/{notification}/mark-read', function($notificationId) {auth()->user()->unreadNotifications()->where('id', $notificationId)->first()?->markAsRead();return back();})->name('notifications.markRead');
+    Route::post('notifications/{notification}/mark-read', function($notificationId) {
+        $notification = auth()->user()->unreadNotifications()->where('id', $notificationId)->first();
+        if ($notification) {
+            $notification->markAsRead();
+            return response()->json(['status' => 'read']);
+        }
+        return response()->json(['status' => 'not found'], 404);
+        })->name('notifications.markRead');
     Route::post('notifications/mark-all-read', function() {auth()->user()->unreadNotifications->markAsRead();return back()->with('success', 'All notifications marked as read.');})->name('notifications.markAllRead');
 
     Route::middleware(['can:supplier'])->group(function () {
@@ -111,6 +129,7 @@ Route::middleware(['auth'])->group(function () {
     // Production Routes
     Route::middleware(['can:manage-production'])->group(function () {
         Route::get('/production-orders', [ProductionOrderController::class, 'index'])->name('production_orders.index');
+        Route::get('/production/report', [ProductionOrderController::class, 'report'])->name('production.report');
         Route::get('/production-orders/create', [ProductionOrderController::class, 'create'])->name('production_orders.create');
         Route::post('/production-orders', [ProductionOrderController::class, 'store'])->name('production_orders.store');
         Route::get('/production-orders/{id}', [ProductionOrderController::class, 'show'])->name('production_orders.show');
@@ -162,6 +181,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('logistics/outbound/{shipment}/filter-carriers', [OutboundShipmentController::class, 'filterCarriers'])->name('logistics.outbound.filterCarriers');
    
     Route::get('carrier/dashboard', [CarrierDashboardController::class, 'index'])->name('carrier.dashboard');
+
+    Route::resource('employees', EmployeeController::class);
+    Route::get('/employee/dashboard', [DashboardController::class, 'index'])->name('employee.dashboard');
+    Route::get('/employee/tasks/{task}', [DashboardController::class, 'show'])->name('employee.task.show');
+    Route::patch('/employee/tasks/{allocation}', [DashboardController::class, 'updateStatus'])->name('employee.task.update');
+
+    Route::resource('tasks', TaskController::class);
+
+    Route::get('/workforce/dashboard', [WorkforceController::class, 'dashboard'])->name('workforce.dashboard');
+    Route::get('/workforce/assign/{task}', [WorkforceController::class, 'assignView'])->name('workforce.assign.view');
+    Route::post('/workforce/assign', [WorkforceController::class, 'assign'])->name('workforce.assign');
+
 });
 
 require __DIR__.'/auth.php';

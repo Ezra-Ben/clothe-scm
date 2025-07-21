@@ -1,10 +1,11 @@
 <div class="card mb-4">
-  <div class="card-body">
+  <div class="card-body fixed-chart-height">
     <h5 class="card-title">Production Output (Weekly)</h5>
     <canvas id="productionChart"></canvas>
   </div>
 </div>
 
+@push('scripts')
 <script>
 const ctxProd = document.getElementById('productionChart').getContext('2d');
 
@@ -49,3 +50,4 @@ new Chart(ctxProd, {
   }
 });
 </script>
+@endpush

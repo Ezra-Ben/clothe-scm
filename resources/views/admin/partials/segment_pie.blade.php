@@ -1,10 +1,11 @@
 <div class="card mb-4">
-  <div class="card-body">
+  <div class="card-body fixed-chart-height">
     <h5 class="card-title">Customer Segment Distribution</h5>
     <canvas id="segmentChart"></canvas>
   </div>
 </div>
 
+@push('scripts')
 <script>
 const ctxPie = document.getElementById('segmentChart').getContext('2d');
 new Chart(ctxPie, {
@@ -28,3 +29,4 @@ new Chart(ctxPie, {
   }
 });
 </script>
+@endpush

@@ -15,20 +15,20 @@ class AdminDashboardController extends Controller
     }
 
     public function index()
-    {
+    {   $year = now()->year;
         $metrics = $this->dashboard->getMetrics();
         $topProductIds = $this->dashboard->getTopProductIds();
 
         return view('dashboard', [
-            'actualSales' => $this->dashboard->getActualSalesPerMonth(),
-            'forecastedSales' => $this->dashboard->getForecastedSalesPerMonth(),
-            'productSales' => $this->dashboard->getProductSalesPerMonth($topProductIds),
-            'productForecasts' => $this->dashboard->getProductForecasts($topProductIds),
+            'actualSales' => $this->dashboard->getActualSalesPerMonth($year),
+            'forecastedSales' => $this->dashboard->getForecastedSalesPerMonth($year),
+            'productSales' => $this->dashboard->getProductSalesPerMonth($topProductIds, $year),
+            'productForecasts' => $this->dashboard->getProductForecasts($topProductIds, $year),
             'topProductIds' => $topProductIds,
             'segmentCounts' => $this->dashboard->getSegmentCounts(),
             'weeklyProductionData' => $this->dashboard->getWeeklyProductionData(),
             'recentSuppliers' => $this->dashboard->getRecentSuppliers(),
-            'approvedRequests' => $this->dashboard->getApprovedProcurementsThisMonth(),
+            'approvedRequests' => $this->dashboard->getApprovedProcurementsThisWeek(),
             'metrics' => $metrics,
         ]);
     }

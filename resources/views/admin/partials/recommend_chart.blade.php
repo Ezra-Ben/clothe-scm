@@ -1,7 +1,11 @@
-<div>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Product Recommendation Sales (Monthly)</h5>
     <canvas id="recommendChart"></canvas>
+  </div>
 </div>
 
+@push('scripts')
 <script>
     const recommendCtx = document.getElementById('recommendChart').getContext('2d');
 
@@ -9,11 +13,11 @@
     const productIds = {!! json_encode($topProductIds) !!};
 
     const salesData = {};
-    const forecastData = {};
+    const forecastsData = {};
 
     productIds.forEach(id => {
         salesData[id] = Array(12).fill(0);
-        forecastData[id] = Array(12).fill(0);
+        forecastsData[id] = Array(12).fill(0);
     });
 
     @foreach($productSales as $row)
@@ -21,7 +25,7 @@
     @endforeach
 
     @foreach($productForecasts as $row)
-        forecastData[{{ $row->product_id }}][{{ $row->month - 1 }}] = {{ round($row->total) }};
+        forecastsData[{{ $row->product_id }}][{{ $row->month - 1 }}] = {{ round($row->total) }};
     @endforeach
 
     const datasets = [];
@@ -36,7 +40,7 @@
         });
         datasets.push({
             label: `Product ${id} (Forecast)`,
-            data: forecastData[id],
+            data: forecastsData[id],
             borderColor: 'orange',
             borderDash: [5, 5],
             fill: false,
@@ -52,3 +56,4 @@
         }
     });
 </script>
+@endpush

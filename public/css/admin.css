@@ -1,0 +1,91 @@
+/* Ensure canvas charts don't overflow */
+canvas {
+  max-height: 300px;
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Space below each chart */
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+.kpi-wrapper {
+  background-color: #bcbdbe;  /* Soft professional light gray */
+  padding: 1.2rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding-bottom: 2.7rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.kpi-title {
+  font-weight: 700;
+  color: #212529;
+  border-bottom: 2px solid #ced4da;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.kpi-item {
+  display: flex;
+  flex-direction: column; /* stack label on top, icon+value below */
+  align-items: center;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+  font-size: 1rem;
+  color: #495057;
+  font-weight: 500;
+  text-align: center;
+}
+/*
+.kpi-item:last-child {
+  border-bottom: none;
+}
+*/
+/* Icon and value container aligned horizontally */
+.kpi-icon-value {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: #212529;
+  margin-top: 0.5rem;
+}
+
+.kpi-icon-value i {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.kpi-icon-value span {
+  font-size: 1.25rem;
+}
+
+.fixed-chart-height {
+  height: 360px; 
+  display: flex;
+  flex-direction: column;
+}
+
+.fixed-chart-height canvas {
+  flex-grow: 1;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Make sure rows stack on small screens */
+@media (max-width: 767.98px) {
+  .col-md-3,
+  .col-md-6,
+  .col-md-9 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

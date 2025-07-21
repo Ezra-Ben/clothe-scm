@@ -1,44 +1,62 @@
-<div class="card mb-3 bg-light">
-    <div class="card-body">
-        <h5 class="card-title">📊 System KPIs</h5>
-        <ul class="list-group list-group-flush">
+<div class="kpi-wrapper">
+  <h5 class="kpi-title mb-3">
+    <i class="bi bi-bar-chart-line-fill text-primary me-2"></i>
+    System KPIs
+  </h5>
 
-            <li class="list-group-item">
-                <i class="bi bi-people-fill text-primary me-2"></i>
-                <strong>Total Active Customers:</strong>
-                {{ $metrics['active_customers'] }}
-            </li>
+  <div class="kpi-item">
+    <strong>Total Active Customers:</strong>
+    <div class="kpi-icon-value">
+      <i class="bi bi-people-fill text-primary"></i>
+      <span>{{ $metrics['active_customers'] }}</span>
+    </div>
+  </div>
 
-            <li class="list-group-item">
-                <i class="bi bi-truck text-success me-2"></i>
-                <strong>Suppliers Registered:</strong>
-                {{ $metrics['registered_suppliers'] }}
-            </li>
+  <div class="kpi-item">
+    <strong>Suppliers Registered:</strong>
+    <div class="kpi-icon-value">
+      <i class="bi bi-truck text-success"></i>
+      <span>{{ $metrics['registered_suppliers'] }}</span>
+    </div>
+  </div>
 
-            <li class="list-group-item">
-                <i class="bi bi-hourglass-split text-warning me-2"></i>
-                <strong>Pending Procurement Requests:</strong>
-                {{ $metrics['pending_procurements'] }}
-            </li>
+  <div class="kpi-item">
+    <strong>Pending Procurement Requests:</strong>
+    <div class="kpi-icon-value">
+      <i class="bi bi-hourglass-split text-warning"></i>
+      <span>{{ $metrics['pending_procurements'] }}</span>
+    </div>
+  </div>
 
-            <li class="list-group-item">
-                <i class="bi bi-cart-check-fill text-info me-2"></i>
-                <strong>Orders This Month:</strong>
-                {{ $metrics['orders_this_month'] }}
-            </li>
+  <div class="kpi-item">
+    <strong>Orders This Month:</strong>
+    <div class="kpi-icon-value">
+      <i class="bi bi-cart-check-fill text-info"></i>
+      <span>{{ $metrics['orders_this_month'] }}</span>
+    </div>
+  </div>
 
-            <li class="list-group-item">
-                <i class="bi bi-currency-dollar text-secondary me-2"></i>
-                <strong>Current Inventory Value:</strong>
-                ${{ number_format($metrics['inventory_value'], 2) }}
-            </li>
+  <div class="kpi-item">
+    <strong>Current Inventory Value:</strong>
+    <div class="kpi-icon-value">
+      <span>UGX {{ number_format($metrics['inventory_value'], 2) }}</span>
+    </div>
+  </div>
 
-            <li class="list-group-item">
-                <i class="bi bi-exclamation-circle-fill text-danger me-2"></i>
-                <strong>Low Stock Items:</strong>
-                {{ $metrics['low_stock_items'] }}
-            </li>
+  <div class="kpi-item">
+    <strong>Low Stock Items:</strong>
+    <div class="kpi-icon-value">
+      <i class="bi bi-exclamation-circle-fill text-danger"></i>
+      <span>{{ $metrics['low_stock_items'] }}</span>
+    </div>
+   </div>
 
-        </ul>
+   
+    <div class="kpi-item">
+      <strong>Employees:</strong>
+      <div class="kpi-icon-value">
+        <i class="bi bi-people-fill text-primary"></i>
+        <span>26</span>
+      </div>
     </div>
 </div>

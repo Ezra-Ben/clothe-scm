@@ -63,7 +63,45 @@
                         </a>
                     </li>
                 @endif
+{{--
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell"></i>
+                        @if(auth()->user()->unreadNotifications->count())
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ auth()->user()->unreadNotifications->count() }}
+                            </span>
+                        @endif
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="width: 300px;">
+                        <li class="dropdown-header">Notifications</li>
+                        @forelse(auth()->user()->unreadNotifications as $notification)
+                            <li>
+                                <a href="#" class="dropdown-item d-flex justify-content-between align-items-center"
+                                   onclick="markAsRead('{{ $notification->id }}')">
+                                    <div>
+                                        <strong>{{ $notification->data['sender'] }}</strong><br>
+                                        {{ \Illuminate\Support\Str::limit($notification->data['message'], 50) }}
+                                    </div>
+                                </a>
+                            </li>
+                        @empty
+                            <li><span class="dropdown-item-text text-muted">No new notifications</span></li>
+                        @endforelse
 
+                        @if(auth()->user()->unreadNotifications->count())
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ url('/notifications/mark-all-read') }}">
+                                    @csrf
+                                    <button class="dropdown-item text-center text-danger" type="submit">Clear All</button>
+                                </form>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
+--}}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
