@@ -25,7 +25,12 @@
 
         <div class="mb-3">
             <label for="status" class="form-label">Status</label>
-            <input type="text" class="form-control" id="status" name="status" value="{{ old('status', $resource->status) }}">
+            <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
+                <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>Available</option>
+                <option value="in_use" {{ old('status') == 'in_use' ? 'selected' : '' }}>In Use</option>
+                <option value="maintenance" {{ old('status') == 'maintenance' ? 'selected' : '' }}>Under Maintenance</option>
+                <option value="offline" {{ old('status') == 'offline' ? 'selected' : '' }}>Offline</option>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-primary">Update Resource</button>

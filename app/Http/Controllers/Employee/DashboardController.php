@@ -36,13 +36,13 @@ class DashboardController extends Controller
 
         $coWorkers = $task->allocations()->with('employee.user')->get();
 
-        return view('employee.task-show', compact('task', 'coWorkers', 'allocation'));
+        return view('task.show', compact('task', 'coWorkers', 'allocation'));
     }
 
     public function updateStatus(Request $request, Allocation $allocation)
     {
         $request->validate([
-            'status' => 'required|in:Pending,In Process,Complete',
+            'status' => 'required|in:pending,in_process,complete',
         ]);
 
         if ($allocation->employee->user_id !== auth()->id()) {
@@ -51,7 +51,7 @@ class DashboardController extends Controller
 
         $allocation->status = $request->status;
 
-        if ($request->status === 'Complete') {
+        if ($request->status === 'complete') {
             $allocation->completed_at = now();
         }
 
@@ -60,12 +60,22 @@ class DashboardController extends Controller
         $task = $allocation->task;
 
         $incomplete = $task->allocations()
-                           ->where('status', '!=', 'Complete')
+                           ->where('status', '!=', 'complete')
                            ->count();
 
         if ($incomplete === 0) {
-            $task->status = 'Complete';
+            $task->status = 'complete';
             $task->save();
+        }
+
+        // Check if this employee still has any incomplete allocations
+        $remaining = Allocation::where('employee_id', $employee->id)
+                                ->where('status', '!=', 'complete')
+                                ->exists();
+
+        if (!$remaining) {
+            $employee->status = 'unassigned';
+            $employee->save();
         }
 
         return redirect()->route('employee.dashboard')

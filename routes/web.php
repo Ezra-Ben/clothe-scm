@@ -3,8 +3,14 @@
 use App\Http\Controllers\Procurement\ProcurementRequestController;
 use App\Http\Controllers\Procurement\ProcurementReplyController;
 use App\Http\Controllers\Production\ProductionOrderController;
+use App\Http\Controllers\Production\CapacityPlanningController;
 use App\Http\Controllers\Production\ProductionBatchController;
 use App\Http\Controllers\Production\QualityControlController;
+use App\Http\Controllers\Production\ResourceController;
+use App\Http\Controllers\Production\BomItemController;
+use App\Http\Controllers\Production\ReportController;
+use App\Http\Controllers\Production\BomController;
+use App\Http\Controllers\Production\ScheduleController;
 use App\Http\Controllers\Logistics\OutboundShipmentController;
 use App\Http\Controllers\Logistics\InboundShipmentController;
 use App\Http\Controllers\Logistics\LogisticsController;
@@ -16,6 +22,7 @@ use App\Http\Controllers\Supplier\PerformanceController;
 use App\Http\Controllers\Supplier\ContractController;
 use App\Http\Controllers\Supplier\SupplierController;
 use App\Http\Controllers\Employee\EmployeeController;
+use App\Http\Controllers\Employee\HRController;
 use App\Http\Controllers\Employee\DashboardController;
 use App\Http\Controllers\Workforce\WorkforceController;
 use App\Http\Controllers\Workforce\TaskController;
@@ -28,9 +35,11 @@ use App\Http\Controllers\Product\CheckoutController;
 use App\Http\Controllers\Product\CartController;
 use App\Http\Controllers\Order\PaymentController;
 use App\Http\Controllers\Order\OrderController;
+use App\Http\Controllers\Chat\ChatController;
+use App\Http\Controllers\Auth\RoleSelectionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RoleSelectionController;
+use App\Models\Conversation;
 
 // Public routes (no login required)
 
@@ -128,14 +137,22 @@ Route::middleware(['auth'])->group(function () {
     });
     // Production Routes
     Route::middleware(['can:manage-production'])->group(function () {
+        Route::resource('boms', BomController::class);
+        Route::resource('resources', ResourceController::class);
+        Route::resource('boms.items', BomItemController::class);
+        Route::resource('schedules', ScheduleController::class);
+        Route::resource('quality_control', QualityControlController::class);
+        Route::resource('production_batches', ProductionBatchController::class);
         Route::get('/production-orders', [ProductionOrderController::class, 'index'])->name('production_orders.index');
         Route::get('/production/report', [ProductionOrderController::class, 'report'])->name('production.report');
         Route::get('/production-orders/create', [ProductionOrderController::class, 'create'])->name('production_orders.create');
         Route::post('/production-orders', [ProductionOrderController::class, 'store'])->name('production_orders.store');
         Route::get('/production-orders/{id}', [ProductionOrderController::class, 'show'])->name('production_orders.show');
         Route::post('/production-orders/{id}/complete', [ProductionOrderController::class, 'complete'])->name('production_orders.complete');
-        Route::resource('production_batches', ProductionBatchController::class);
-        Route::resource('quality_control', QualityControlController::class);
+        Route::get('reports/resource-utilization', [ReportController::class, 'resourceUtilization'])->name('reports.resource_utilization');
+        Route::get('capacity-planning', [CapacityPlanningController::class, 'index'])->name('capacity_planning.index');
+        Route::post('capacity-planning/assign', [CapacityPlanningController::class, 'assign'])->name('capacity_planning.assign');
+        Route::post('/capacity/update-assignment', [CapacityPlanningController::class, 'updateAssignment'])->name('capacity_planning.updateAssignment');
 
     });
 
@@ -185,13 +202,29 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('employees', EmployeeController::class);
     Route::get('/employee/dashboard', [DashboardController::class, 'index'])->name('employee.dashboard');
     Route::get('/employee/tasks/{task}', [DashboardController::class, 'show'])->name('employee.task.show');
-    Route::patch('/employee/tasks/{allocation}', [DashboardController::class, 'updateStatus'])->name('employee.task.update');
+    Route::patch('/employee/allocations/{allocation}', [DashboardController::class, 'updateStatus'])->name('employee.task.update');
 
     Route::resource('tasks', TaskController::class);
-
-    Route::get('/workforce/dashboard', [WorkforceController::class, 'dashboard'])->name('workforce.dashboard');
+    Route::get('/hr/dashboard', [HRController::class, 'dashboard'])->name('hr.dashboard');
     Route::get('/workforce/assign/{task}', [WorkforceController::class, 'assignView'])->name('workforce.assign.view');
-    Route::post('/workforce/assign', [WorkforceController::class, 'assign'])->name('workforce.assign');
+    Route::post('/workforce/assign/employee', [WorkforceController::class, 'assign'])->name('workforce.assign');
+    Route::get('/workforce/dashboard', [WorkforceController::class, 'dashboard'])->name('workforce.dashboard');
+
+    // Chat & Messaging
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{id}', [ChatController::class, 'show'])->name('chat.show');
+    Route::post('/chat/{conversation}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/chat/start', [ChatController::class, 'startConversation'])->name('chat.startConversation');
+    Route::get('/conversations/{id}/info', function ($id) {
+    $conversation = Conversation::with(['userOne', 'userTwo'])->findOrFail($id);
+
+    $userId = auth()->id();
+    if ($conversation->user_one_id !== $userId && $conversation->user_two_id !== $userId) {
+        abort(403);
+    }
+
+    return response()->json($conversation);
+    });
 
 });
 

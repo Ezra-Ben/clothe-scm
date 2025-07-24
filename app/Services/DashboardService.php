@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Customer;
+use App\Models\Employee;
 use App\Models\Inventory;
 use App\Models\InboundShipment;
 use App\Models\ProcurementRequest;
@@ -21,9 +22,12 @@ class DashboardService
         )->get()->filter(fn($user) => $user->hasRole('customer'))->count();
 
         $supplierCount = User::whereHas('role', function ($q) {
-            $q->where('name', 'supplier');
-        })->count();
+                $q->where('name', 'supplier');
+            })
+            ->whereHas('vendor.supplier')
+            ->count();
 
+        $employeeCount = Employee::count();
 
         return [
             'active_customers' => $activeCustomers,
@@ -34,6 +38,7 @@ class DashboardService
             'inventory_value' => Inventory::join('products', 'inventories.product_id', '=', 'products.id')
                 ->selectRaw('SUM(inventories.quantity_on_hand * products.price) as total')->value('total'),
             'low_stock_items' => Inventory::where('quantity_on_hand', '<', 10)->count(),
+            'employee_count' => $employeeCount,
         ];
     }
 

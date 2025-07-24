@@ -29,7 +29,7 @@ class OutboundShipmentCreatedNotification extends Notification
             'shipment_id' => $this->shipment->id,
             'order_id' => $this->shipment->order_id,
             'message' => 'A new outbound shipment has been created.',
-            'url' => route('logistics.outbound.show', $this->shipment->id),
+            'url' => url(route('outbound.show', $this->shipment->id)),
         ];
     }
 }

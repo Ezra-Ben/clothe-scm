@@ -19,7 +19,8 @@ class TaskController extends Controller
     public function create()
     {
         $jobTitles = JobTitle::all();
-        return view('tasks.create', compact('jobTitles'));
+        $departmentId = request('department_id');
+        return view('task.create', compact('jobTitles', 'departmentId'));
     }
 
     public function store(Request $request)
@@ -29,6 +30,7 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'scheduled_date' => 'required|date',
             'average_duration_minutes' => 'required|integer|min:1',
+            'department_id' => 'required|exists:departments,id',
             'allowed_job_titles' => 'required|array|min:1',
             'allowed_job_titles.*.job_title_id' => 'required|exists:job_titles,id',
             'allowed_job_titles.*.required_count' => 'required|integer|min:1',
@@ -36,6 +38,6 @@ class TaskController extends Controller
 
         $this->taskService->createTask($data);
 
-        return redirect()->route('workforce.dashboard')->with('success', 'Task created successfully.');
+        return redirect()->route('workforce.dashboard', ['department_id' => $data['department_id']])->with('success', 'Task created successfully.');
     }
 }

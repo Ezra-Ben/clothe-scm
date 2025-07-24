@@ -45,6 +45,7 @@
 
 
     <div class="d-flex justify-content-center my-4 flex-wrap gap-3">
+        <a href="{{ route('hr.dashboard') }}" class="btn btn-primary">Human Resource</a>
         <a href="{{ route('admin.select.supplier') }}" class="btn btn-primary">Suppliers</a>
         <a href="{{ route('admin.products.index') }}" class="btn btn-primary">Products</a>
         <a href="{{ route('production_orders.index') }}" class="btn btn-primary">Production</a>

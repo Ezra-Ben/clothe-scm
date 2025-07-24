@@ -11,7 +11,7 @@
     @foreach(auth()->user()->unreadNotifications as $notification)
         <div class="alert alert-info d-flex justify-content-between align-items-center">
             <span>{{ $notification->data['message'] }}</span>
-            <a href="{{ $notification->data['url'] }}" class="btn btn-primary btn-sm">View</a>
+            <a href="{{ $notification->data['url'] ?? 'System'}}" class="btn btn-primary btn-sm">View</a>
             <form method="POST" action="{{ route('notifications.markRead', $notification->id) }}" class="d-inline">
                 @csrf
                 <button type="submit" class="btn btn-secondary btn-sm ms-2">Mark as Read</button>
@@ -49,7 +49,16 @@
 
     {{-- Quick Access Buttons --}}
     <div class="d-flex justify-content-end mb-3 gap-2">
-        <a href="{{ route('boms.index') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('workforce.dashboard', ['department_id' => 1]) }}" class="btn btn-outline-info">
+            <i class="bi bi-people-fill"></i> Manage Workforce
+        </a>
+        <a href="{{ route('resources.index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-boxes"></i> Manage Resources
+        </a>
+        <a href="{{ route('schedules.index') }}" class="btn btn-outline-success">
+            <i class="bi bi-calendar-check"></i> Manage Schedules
+        </a>
+        <a href="{{ route('boms.index') }}" class="btn btn-outline-primary">
             <i class="bi bi-diagram-3"></i> Manage BOM
         </a>
         <a href="{{ route('production.report') }}" class="btn btn-outline-primary">

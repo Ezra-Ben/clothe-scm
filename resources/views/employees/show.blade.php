@@ -22,11 +22,6 @@
                 <strong>Email:</strong> {{ $employee->user->email }}
             </div>
 
-            {{-- Contact --}}
-            <div class="mb-3">
-                <strong>Contact:</strong> {{ $employee->user->contact ?? 'N/A' }}
-            </div>
-
             {{-- Date of Birth --}}
             <div class="mb-3">
                 <strong>Date of Birth:</strong> {{ $employee->dob }}

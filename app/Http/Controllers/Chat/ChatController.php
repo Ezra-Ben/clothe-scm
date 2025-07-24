@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers\Chat;
 
-use App\Models\Conversation;
-use App\Models\Message;
 use App\Models\User;
+use App\Models\Message;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use App\Events\MessageSent;
-use App\Notifications\NewChatMessage;
+use App\Notifications\NewChatMessageNotification;
 
 class ChatController extends Controller
 {
     // Show the full chat interface with sidebar and modal
     public function index()
     {
-        $user = Auth::user();
+        $user = Auth::user()->load('role');;
 
-        $conversations = Conversation::where('user_one_id', $user->id)
-            ->orWhere('user_two_id', $user->id)
+        $conversations = $user->conversations()
             ->with(['userOne', 'userTwo'])
             ->latest('updated_at')
             ->get();
@@ -38,7 +36,7 @@ class ChatController extends Controller
             })
             ->get();
 
-        return view('chat.app', compact('conversations', 'users'));
+        return view('chat.chat', compact('conversations', 'users'));
     }
 
     // Return just the messages partial for AJAX loading
@@ -51,7 +49,7 @@ class ChatController extends Controller
             abort(403);
         }
 
-        return view('chat.partials.messages', [
+        return view('chat.partials.message', [
             'messages' => $conversation->messages,
             'conversation' => $conversation,
         ]);
@@ -61,7 +59,7 @@ class ChatController extends Controller
     public function sendMessage(Request $request, $id)
     {
         $request->validate([
-            'message' => 'required|string',
+            'message' => 'required|string|max:1000',
         ]);
 
         $conversation = Conversation::findOrFail($id);
@@ -76,20 +74,19 @@ class ChatController extends Controller
             'message' => $request->message,
         ]);
 
+        $conversation->touch();
+
         // Send notification
         $receiverId = $conversation->user_one_id == $user->id
             ? $conversation->user_two_id
             : $conversation->user_one_id;
 
         $receiver = User::find($receiverId);
-        $receiver->notify(new NewChatMessage($message->message, $user));
-
-        // Broadcast the message
-        event(new MessageSent($message));
+        $receiver->notify(new NewChatMessageNotification($message->message, $user));
 
         return response()->json([
             'message' => $message->message,
-            'sender' => $user->name,
+            'sender' => optional($user->role)->name ?? 'unknown',
             'created_at' => $message->created_at->format('H:i'),
         ]);
     }

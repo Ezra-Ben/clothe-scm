@@ -15,8 +15,8 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = Employee::with('user', 'department', 'jobTitle')->get();
-        return view('employees.index', compact('employees'));
+        $departments = Department::with(['employees.user', 'employees.jobTitle'])->get();
+        return view('employees.index', compact('departments'));
     }
 
     public function show($id)
@@ -136,7 +136,7 @@ class EmployeeController extends Controller
         ]);
 
         // Create employee
-        Employee::create([
+        $employee = Employee::create([
             'user_id' => $user->id,
             'dob' => $data['dob'],
             'department_id' => $data['department_id'],
@@ -147,7 +147,8 @@ class EmployeeController extends Controller
         // Clear session
         Session::forget('employee_registration_data');
 
-        return redirect()->route('employees.create')->with('success', 'Employee registered successfully.');
+        return redirect()->route('employees.show', $employee->id)->with('success', 'Employee registered successfully.');
+
 }
 
 }

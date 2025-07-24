@@ -3,30 +3,6 @@
 @section('content')
 <h1 class="mb-4 text-primary">Resource Capacity Planning</h1>
 
-{{-- 1. CAPACITY OVERVIEW FIRST --}}
-<div class="card shadow-sm border-primary mb-5">
-    <div class="card-header bg-primary text-white">
-        Capacity Overview
-    </div>
-    <div class="card-body">
-        <form action="{{ route('capacity_planning.index') }}" method="GET" class="row g-3 mb-4">
-            <div class="col-md-4">
-                <label for="view_start_date" class="form-label">View From:</label>
-                <input type="date" class="form-control" id="view_start_date" name="start_date" value="{{ \Carbon\Carbon::parse($startDate)->format('Y-m-d') }}">
-            </div>
-            <div class="col-md-4">
-                <label for="view_end_date" class="form-label">View To:</label>
-                <input type="date" class="form-control" id="view_end_date" name="end_date" value="{{ \Carbon\Carbon::parse($endDate)->format('Y-m-d') }}">
-            </div>
-            <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-outline-primary">Update View</button>
-            </div>
-        </form>
-        <div id='calendar' style="height: 600px;"></div>
-    </div>
-</div>
-
-{{-- 2. ASSIGNMENT FORM AFTERWARDS --}}
 <div class="card shadow-sm border-primary">
     <div class="card-header bg-primary text-white">
         Assign Resource to Batch
@@ -101,38 +77,50 @@
         </form>
     </div>
 </div>
+
+<br>
+
+<div class="card shadow-sm border-primary mb-5">
+    <div class="card-header bg-primary text-white">
+        Capacity Overview
+    </div>
+    <div class="card-body">
+        <form action="{{ route('capacity_planning.index') }}" method="GET" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label for="view_start_date" class="form-label">View From:</label>
+                <input type="date" class="form-control" id="view_start_date" name="start_date" value="{{ \Carbon\Carbon::parse($start)->format('Y-m-d') }}">
+            </div>
+            <div class="col-md-4">
+                <label for="view_end_date" class="form-label">View To:</label>
+                <input type="date" class="form-control" id="view_end_date" name="end_date" value="{{ \Carbon\Carbon::parse($end)->format('Y-m-d') }}">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-outline-primary">Update View</button>
+            </div>
+        </form>
+        <div id='calendar' style="height: 600px;"></div>
+    </div>
+</div>
 @endsection
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.8/index.global.min.css" rel="stylesheet" />
+@endpush
+
 @push('scripts')
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
-
 <script>
-    window.calendarEvents = @json(
-        collect($calendarData)->flatMap(function($data) {
-            return collect($data['events'])->map(function($event) {
-                return [
-                    'title' => $event['title'],
-                    'start' => $event['start'],
-                    'end' => $event['end'],
-                    'resourceId' => $event['resource_id'],
-                    'backgroundColor' => '#007bff',
-                    'borderColor' => '#007bff',
-                    'textColor' => '#ffffff',
-                ];
-            });
-        })
-    );
-
-    window.calendarResources = @json(
-        collect($resources)->map(function($resource) {
-            return [
-                'id' => $resource->id,
-                'title' => $resource->name . ' (' . ucfirst($resource->type) . ')',
-            ];
-        })
-    );
+    window.calendarEvents = @json($calendarEvents ?? []);
+    window.calendarResources = @json($calendarResources ?? []);
+    window.assignmentUpdateUrl = "{{ route('capacity_planning.updateAssignment') }}";
+    window.csrfToken = "{{ csrf_token() }}";
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.8/index.global.min.js"></script>
 
 <script src="{{ asset('js/capacity_planning_calendar.js') }}"></script>
 @endpush

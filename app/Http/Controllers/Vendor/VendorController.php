@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Vendor;
 
 use App\Http\Requests\VendorFormRequest;

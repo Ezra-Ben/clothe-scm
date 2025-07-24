@@ -7,7 +7,7 @@
     <div class="bg-light border-end p-3" style="width: 25%; overflow-y: auto;">
         <h5 class="mb-4">Conversations</h5>
 
-        @foreach($conversations as $conv)
+        @forelse($conversations as $conv)
             @php
                 $otherUser = $conv->user_one_id === auth()->id() ? $conv->userTwo : $conv->userOne;
             @endphp
@@ -17,7 +17,9 @@
                 <div class="fw-bold">{{ $otherUser->name }}</div>
                 <small class="text-muted">{{ $conv->updated_at->diffForHumans() }}</small>
             </div>
-        @endforeach
+        @empty
+            <p class="text-muted">No conversations yet.</p>
+        @endforelse
 
         <hr>
         <button class="btn btn-sm btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#newConversationModal">
@@ -38,5 +40,10 @@
 @endsection
 
 @push('scripts')
+<script>
+    window.CurrentUserId = {{ auth()->id() }};
+    window.CurrentUserRole = "{{ auth()->user()->role->name }}";
+</script>
+
 <script src="{{ asset('js/chat.js') }}"></script>
 @endpush

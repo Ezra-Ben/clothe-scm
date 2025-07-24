@@ -15,13 +15,6 @@
                {{ $canEditEmployee ? '' : 'readonly' }}>
     </div>
 
-    {{-- Contact --}}
-    <div class="mb-3">
-        <label>Contact</label>
-        <input type="text" name="contact" class="form-control"
-               value="{{ old('contact', $employee->user->contact) }}"
-               {{ $canEditEmployee ? '' : 'readonly' }}>
-    </div>
 
     {{-- Department --}}
     <div class="mb-3">

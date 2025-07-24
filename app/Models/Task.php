@@ -12,17 +12,22 @@ class Task extends Model
         'scheduled_date',
         'average_duration_minutes',
         'status',
+        'department_id',
     ];
 
-    // Job titles allowed to handle this task
     public function allowedJobTitles()
     {
-        return $this->belongsToMany(JobTitle::class, 'job_title_task');
+        return $this->belongsToMany(JobTitle::class, 'job_title_task')
+                    ->withPivot('required_count');
     }
 
-    // Allocated employees
     public function allocations()
     {
         return $this->hasMany(Allocation::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 }

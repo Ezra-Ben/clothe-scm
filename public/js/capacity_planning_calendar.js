@@ -3,41 +3,75 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!calendarEl) return;
 
     const events = window.calendarEvents || [];
-    const resources = window.calendarResources || [];
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'resourceTimeGridDay',
+        initialView: 'timeGridWeek', // or 'timeGridDay' or 'dayGridMonth'
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'resourceTimeGridDay,resourceTimeGridWeek,dayGridMonth'
+            right: 'timeGridDay,timeGridWeek,dayGridMonth'
         },
-        schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-        resources: resources,
+        plugins: [
+            FullCalendar.dayGridPlugin,
+            FullCalendar.timeGridPlugin,
+            FullCalendar.interactionPlugin
+        ],
         events: events,
         editable: true,
-        resourceAreaWidth: '15%',
         slotMinTime: "06:00:00",
         slotMaxTime: "22:00:00",
         nowIndicator: true,
         eventColor: '#378006',
 
-        eventDrop: function (info) {
-            if (!confirm("Are you sure you want to reschedule " + info.event.title + "?")) {
+        eventDrop(info) {
+            if (!confirm("Reschedule this assignment?")) {
                 info.revert();
-            } else {
-                alert('Assignment rescheduled! (Implement AJAX)');
+                return;
             }
+            updateAssignment(info);
         },
 
-        eventResize: function (info) {
-            if (!confirm("Are you sure you want to resize " + info.event.title + "?")) {
+        eventResize(info) {
+            if (!confirm("Change assignment duration?")) {
                 info.revert();
-            } else {
-                alert('Assignment duration changed! (Implement AJAX)');
+                return;
             }
+            updateAssignment(info);
         }
     });
 
     calendar.render();
+
+    function updateAssignment(info) {
+        const event = info.event;
+        const payload = {
+            assignment_id: event.id,
+            assigned_start_time: event.start.toISOString(),
+            assigned_end_time: event.end.toISOString(),
+            _token: window.csrfToken
+        };
+
+        fetch(window.assignmentUpdateUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                alert("Error: " + data.message);
+                info.revert();
+            } else {
+                alert("Assignment updated!");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Something went wrong.");
+            info.revert();
+        });
+    }
 });

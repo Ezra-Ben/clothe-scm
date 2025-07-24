@@ -5,7 +5,7 @@
                 <h5 class="modal-title" id="createScheduleModalLabel">Create New Schedule</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('production.schedules.store') }}" method="POST">
+            <form action="{{ route('schedules.store') }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">

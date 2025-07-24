@@ -15,7 +15,8 @@ class TaskService
                 'description' => $data['description'] ?? null,
                 'scheduled_date' => $data['scheduled_date'],
                 'average_duration_minutes' => $data['average_duration_minutes'],
-                'status' => 'Unassigned',
+                'status' => 'pending',
+                'department_id' => $data['department_id'],
             ]);
 
             foreach ($data['allowed_job_titles'] as $job) {

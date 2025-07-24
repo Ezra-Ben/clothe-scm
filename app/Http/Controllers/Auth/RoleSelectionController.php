@@ -15,7 +15,7 @@ class RoleSelectionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'role' => 'required|in:carrier,customer',
+            'role' => 'required|in:carrier,customer,supplier',
         ]);
         session(['selected_role' => $request->role]);
         return redirect()->route('register');

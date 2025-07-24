@@ -132,10 +132,16 @@
         <div class="mb-3">
             <select name="product_category"
                     class="form-select @error('product_category') is-invalid @enderror" required>
-                <option value="">-- Select Product Category --</option>
-                <option value="electronics" {{ old('product_category') == 'electronics' ? 'selected' : '' }}>Electronics</option>
-                <option value="clothing" {{ old('product_category') == 'clothing' ? 'selected' : '' }}>Clothing</option>
-                <option value="furniture" {{ old('product_category') == 'furniture' ? 'selected' : '' }}>Furniture</option>
+                <option value="">-- Select Raw Material Category --</option>
+                <option value="electronics" {{ old('product_category') == 'electronics' ? 'selected' : '' }}>Cotton Fabric</option>
+                <option value="clothing" {{ old('product_category') == 'clothing' ? 'selected' : '' }}>Organic cotton</option>
+                <option value="furniture" {{ old('product_category') == 'furniture' ? 'selected' : '' }}>Denim Fabric</option>
+                <option value="electronics" {{ old('product_category') == 'electronics' ? 'selected' : '' }}>Linen Fabric</option>
+                <option value="clothing" {{ old('product_category') == 'clothing' ? 'selected' : '' }}>Buttons</option>
+                <option value="furniture" {{ old('product_category') == 'furniture' ? 'selected' : '' }}>Zippers</option>
+                <option value="electronics" {{ old('product_category') == 'electronics' ? 'selected' : '' }}>Threads</option>
+                <option value="clothing" {{ old('product_category') == 'clothing' ? 'selected' : '' }}>Bands</option>
+                <option value="furniture" {{ old('product_category') == 'furniture' ? 'selected' : '' }}>Packaging Bags</option>
             </select>
             @error('product_category') <small class="text-danger">{{ $message }}</small> @enderror
         </div>

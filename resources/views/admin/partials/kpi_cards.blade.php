@@ -56,7 +56,7 @@
       <strong>Employees:</strong>
       <div class="kpi-icon-value">
         <i class="bi bi-people-fill text-primary"></i>
-        <span>26</span>
+        <span>{{ $metrics['employee_count'] }}</span>
       </div>
     </div>
 </div>

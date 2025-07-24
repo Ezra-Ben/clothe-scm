@@ -1,4 +1,4 @@
-k@extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
 <div class="container">
@@ -22,6 +22,18 @@ k@extends('layouts.app')
                 <option value="failed" {{ $batch->status == 'failed' ? 'selected' : '' }}>Failed</option>
             </select>
         </div>
+        {{--
+        <button type="button" class="btn btn-outline-primary btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#editScheduleModal"
+                data-schedule-id="{{ $schedule->id }}"
+                data-description="{{ $schedule->description }}"
+                data-start-date="{{ $schedule->start_date->format('Y-m-d') }}"
+                data-end-date="{{ $schedule->end_date->format('Y-m-d') }}"
+                data-status="{{ $schedule->status }}"
+                data-batches="{{ $schedule->batches->pluck('id')->implode(',') }}">
+                Edit
+        </button>--}}
 
         <button class="btn btn-primary">Update Batch</button>
         <a href="{{ route('production_orders.show', $batch->production_order_id) }}" class="btn btn-secondary">Cancel</a>

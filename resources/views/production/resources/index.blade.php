@@ -3,10 +3,12 @@
 @section('content')
 <h1 class="mb-4 text-primary">Manage Resources</h1>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <a href="{{ route('resources.create') }}" class="btn btn-primary">Add New Resource</a>
-    <a href="{{ route('capacity_planning.index') }}" class="btn btn-outline-primary">View Capacity Planning</a>
+<div class="d-flex align-items-center mb-3">
+    <a href="{{ route('resources.create') }}" class="btn btn-primary me-auto">Add New Resource</a>
+    <a href="{{ route('capacity_planning.index') }}" class="btn btn-outline-primary me-2">Capacity Planning</a>
+    <a href="{{ route('reports.resource_utilization') }}" class="btn btn-outline-secondary">Utilization Report</a>
 </div>
+
 
 @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">

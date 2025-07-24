@@ -17,5 +17,6 @@
             editScheduleModal.querySelector('#editScheduleStartDate').value = startDate;
             editScheduleModal.querySelector('#editScheduleEndDate').value = endDate;
             editScheduleModal.querySelector('#editScheduleStatus').value = status;
+            editScheduleModal.querySelector('#editScheduleBatches').value = batches || '';
         });
     });

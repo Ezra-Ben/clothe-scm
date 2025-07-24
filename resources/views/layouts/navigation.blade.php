@@ -63,7 +63,7 @@
                         </a>
                     </li>
                 @endif
-{{--
+
                 <li class="nav-item dropdown">
                     <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
@@ -78,10 +78,10 @@
                         <li class="dropdown-header">Notifications</li>
                         @forelse(auth()->user()->unreadNotifications as $notification)
                             <li>
-                                <a href="#" class="dropdown-item d-flex justify-content-between align-items-center"
+                                <a href="{{ $notification->data['url'] ?? '#' }}" class="dropdown-item d-flex justify-content-between align-items-center"
                                    onclick="markAsRead('{{ $notification->id }}')">
                                     <div>
-                                        <strong>{{ $notification->data['sender'] }}</strong><br>
+                                        <strong>{{ $notification->data['sender'] ?? 'System' }}</strong><br>
                                         {{ \Illuminate\Support\Str::limit($notification->data['message'], 50) }}
                                     </div>
                                 </a>
@@ -101,7 +101,9 @@
                         @endif
                     </ul>
                 </li>
---}}
+                <a href="{{ route('chat.index') }}" class="nav-link">
+                        <i class="bi bi-chat-dots me-1"></i> Chat
+                </a>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">

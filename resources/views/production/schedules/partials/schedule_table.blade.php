@@ -8,7 +8,6 @@
                 <thead class="bg-light">
                     <tr>
                         <th>Schedule ID</th>
-                        <th>Description</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Status</th>
@@ -20,7 +19,6 @@
                     @forelse($schedules as $schedule)
                         <tr>
                             <td>{{ $schedule->id }}</td>
-                            <td>{{ $schedule->description }}</td>
                             <td>{{ $schedule->start_date->format('Y-m-d') }}</td>
                             <td>{{ $schedule->end_date->format('Y-m-d') }}</td>
                             <td>
@@ -38,6 +36,7 @@
                                 @endif
                             </td>
                             <td>
+                                @if(!$schedule->status=='completed')
                                 <button type="button" class="btn btn-outline-primary btn-sm"
                                         data-bs-toggle="modal"
                                         data-bs-target="#editScheduleModal"
@@ -45,10 +44,12 @@
                                         data-description="{{ $schedule->description }}"
                                         data-start-date="{{ $schedule->start_date->format('Y-m-d') }}"
                                         data-end-date="{{ $schedule->end_date->format('Y-m-d') }}"
-                                        data-status="{{ $schedule->status }}">
+                                        data-status="{{ $schedule->status }}"
+                                        data-batches="{{ $schedule->batches->pluck('id')->implode(',') }}">
                                     Edit
                                 </button>
-                                <form action="{{ route('production.schedules.destroy', $schedule->id) }}" method="POST" class="d-inline">
+                                @endif
+                                <form action="{{ route('schedules.destroy', $schedule->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger btn-sm"

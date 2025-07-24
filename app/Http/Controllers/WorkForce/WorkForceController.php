@@ -11,18 +11,29 @@ use App\Notifications\TaskAssignedNotification;
 
 class WorkforceController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        $unassignedTasks = Task::where('status', 'Unassigned')->get();
-        $assignedTasks = Task::whereIn('status', ['Assigned', 'Complete'])->get();
+        $departmentId = $request->input('department_id');
 
-        return view('workforce.dashboard', compact('unassignedTasks', 'assignedTasks'));
+        $unassignedTasks = Task::where('status', 'pending')
+            ->where('department_id', $departmentId)
+            ->get();
+
+        $assignedTasks = Task::whereIn('status', ['assigned', 'complete'])
+            ->where('department_id', $departmentId)
+            ->get();
+        return view('workforce.dashboard', compact('unassignedTasks', 'assignedTasks', 'departmentId'));
     }
 
-    public function assignView(Task $task)
+    public function assignView(Request $request, Task $task)
     {
-        $employees = Employee::whereIn('job_title_id', $task->allowedJobTitles->pluck('id'))->get();
-        return view('workforce.assign', compact('task', 'employees'));
+        $departmentId = $request->input('department_id');
+
+        $employees = Employee::where('department_id', $departmentId)
+            ->whereIn('job_title_id', $task->allowedJobTitles->pluck('id'))
+            ->get();
+
+        return view('workforce.assign', compact('task', 'employees', 'departmentId'));
     }
 
     public function assign(Request $request)
@@ -52,7 +63,10 @@ class WorkforceController extends Controller
             'status' => 'assigned',
         ]);
 
-        $employee->user->notify(new TaskAssigned($task));
+        $employee->status = 'assigned';
+        $employee->save();
+
+        $employee->user->notify(new TaskAssignedNotification($task));
 
         // Group current assignments by job_title_id
         $currentAssignments = $task->allocations
@@ -64,12 +78,12 @@ class WorkforceController extends Controller
         });
 
         if ($fullyAssigned) {
-            $task->update(['status' => 'Assigned']);
-            return redirect()->route('workforce.dashboard')->with('success', 'Task fully assigned.');
+            $task->update(['status' => 'assigned']);
+            return redirect()->route('workforce.dashboard', ['department_id' => $task->department_id])->with('success', 'Task fully assigned.');
         }
 
         return redirect()
-            ->route('workforce.assign.view', $task)
+            ->route('workforce.assign.view', ['task' => $task->id, 'department_id' => $task->department_id])
             ->with('info', "{$employee->user->name} assigned. More employees still needed.");
     }
 

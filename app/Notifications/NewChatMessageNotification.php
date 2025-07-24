@@ -29,7 +29,7 @@ class NewChatMessage extends Notification
     {
         return [
             'message' => $this->message,
-            'sender' => $this->sender->name,
+            'sender' => optional($this->sender->role)->name ?? 'unknown',
             'sender_id' => $this->sender->id,
         ];
     }

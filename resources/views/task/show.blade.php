@@ -26,7 +26,7 @@
         $myAllocation = $task->allocations->where('employee_id', $employee->id)->first();
     @endphp
 
-    @if ($task->status !== 'Completed' && $myAllocation)
+    @if ($task->status !== 'completed' && $myAllocation)
         <form action="{{ route('employee.task.update', $myAllocation->id) }}" method="POST">
             @csrf
             @method('PATCH')
@@ -35,9 +35,9 @@
 
             <label for="status"><strong>Update Status:</strong></label>
             <select name="status" id="status" class="form-select" required>
-                <option value="Pending" {{ $myAllocation->status === 'Pending' ? 'selected' : '' }}>Pending</option>
-                <option value="In Process" {{ $myAllocation->status === 'In Process' ? 'selected' : '' }}>In Process</option>
-                <option value="Complete" {{ $myAllocation->status === 'Complete' ? 'selected' : '' }}>Complete</option>
+                <option value="Pending" {{ $myAllocation->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="In Process" {{ $myAllocation->status === 'in process' ? 'selected' : '' }}>In Process</option>
+                <option value="Complete" {{ $myAllocation->status === 'complete' ? 'selected' : '' }}>Complete</option>
             </select>
 
             <button type="submit" class="btn btn-primary mt-2">Submit</button>
